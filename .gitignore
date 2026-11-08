@@ -3,3 +3,5 @@ node_modules/
 .dev.vars
 seed/carnet.sql
 .DS_Store
+seed/livres/
+seed/livres.sql

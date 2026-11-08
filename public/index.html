@@ -34,7 +34,7 @@
     <div class="tiles">
       <a class="tile cine" href="#cinema"><div class="ico">🎬</div><div><div class="t">Cinéma</div><div class="d">Films vus, à voir, et ce qu'on pourrait aimer</div></div><div class="n" id="n-films"></div></a>
       <a class="tile pedro" href="/pedro/"><div class="ico">🐦</div><div><div class="t">Diversification de Pedro</div><div class="d">Aliments, semaines, allergènes</div></div><div class="n">→</div></a>
-      <a class="tile livre" href="#livres"><div class="ico">📚</div><div><div class="t">Livres</div><div class="d">Bientôt</div></div><div class="n">0</div></a>
+      <a class="tile livre" href="#livres"><div class="ico">📚</div><div><div class="t">Livres</div><div class="d">Lus, à lire, à acheter</div></div><div class="n" id="n-livres"></div></a>
     </div>
   </section>
 
@@ -60,7 +60,7 @@
         <option value="annee_asc">Année ↑</option>
         <option value="titre">Titre A→Z</option>
       </select>
-      <select id="cine-genre" aria-label="Genre"><option value="">Tous les genres</option></select>
+      <select id="cine-genre" aria-label="Genre"><option value="">Genre</option></select>
     </div>
     <div class="searchrow"><input id="cine-q" type="search" placeholder="Chercher dans la liste…" aria-label="Filtrer les films"></div>
     <div id="cine-list" class="films"></div>
@@ -72,7 +72,55 @@
   <section class="view" id="v-livres" hidden>
     <div class="eyebrow">Lectures</div>
     <h1>Livres</h1>
-    <div class="empty"><div class="big">📚</div><div>Rien pour l'instant.</div><div>Même principe que Cinéma quand tu voudras : lus, à lire, notes à deux.</div></div>
+    <div class="seg" id="liv-seg">
+      <button type="button" aria-pressed="true" data-onglet="biblio">Bibliothèque</button>
+      <button type="button" aria-pressed="false" data-onglet="achat">À acheter</button>
+      <button type="button" aria-pressed="false" data-onglet="stats">Stats</button>
+    </div>
+    <div class="chips" id="liv-chips">
+      <button type="button" class="chip" aria-pressed="true" data-qui="tous">Tous</button>
+      <button type="button" class="chip" aria-pressed="false" data-qui="croco">🐊 Croco</button>
+      <button type="button" class="chip" aria-pressed="false" data-qui="dauphin">🐬 Dauphin</button>
+      <button type="button" class="chip" aria-pressed="false" data-qui="pedro">🐦 Pedro</button>
+    </div>
+    <div class="sortrow" id="liv-filtres">
+      <select id="liv-tri" aria-label="Trier">
+        <option value="recent">Derniers ajoutés</option>
+        <option value="titre">Titre A→Z</option>
+        <option value="auteur">Auteur A→Z</option>
+        <option value="annee_lu">Année de lecture</option>
+        <option value="note">Meilleure note</option>
+      </select>
+      <select id="liv-statut" aria-label="Statut">
+        <option value="">Statut</option>
+        <option value="lu">Lus</option>
+        <option value="en_cours">En cours</option>
+        <option value="a_lire">À lire</option>
+        <option value="a_acheter">À acheter</option>
+      </select>
+    </div>
+    <div class="sortrow" id="liv-filtres2">
+      <select id="liv-genre" aria-label="Genre"><option value="">Genre</option></select>
+      <select id="liv-type" aria-label="Type">
+        <option value="">Type</option>
+        <option value="fiction">Fiction</option>
+        <option value="essai">Essai</option>
+        <option value="reference">Référence</option>
+      </select>
+      <select id="liv-version" aria-label="Version">
+        <option value="">Version</option>
+        <option value="papier">📖 Papier</option>
+        <option value="numerique">💻 Numérique</option>
+      </select>
+      <button type="button" class="chip" id="liv-culte" aria-pressed="false">★</button>
+    </div>
+    <div class="searchrow" id="liv-search"><input id="liv-q" type="search" placeholder="Titre, auteur, éditeur…" aria-label="Filtrer les livres"></div>
+    <div class="compte" id="liv-compte"></div>
+    <div id="liv-list" class="livres"></div>
+    <div id="liv-empty" class="empty" hidden></div>
+    <button type="button" class="btn big more" id="liv-more" hidden>Charger plus</button>
+    <button type="button" class="fab" id="liv-fab" aria-label="Ajouter un livre">+</button>
+    <datalist id="liv-genres"></datalist>
   </section>
 </div>
 
@@ -104,6 +152,23 @@
   <div class="panel" id="film-panel"></div>
 </div>
 
+<!-- Feuille : ajouter un livre -->
+<div class="sheet" id="sheet-liv-add" hidden>
+  <div class="panel">
+    <div class="sheet-head"><div class="grab"></div><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
+    <h2>Ajouter un livre</h2>
+    <div class="field"><label for="la-q">Titre ou auteur</label><input id="la-q" type="search" placeholder="Chercher un livre…" autocomplete="off"></div>
+    <div id="la-results" class="results"></div>
+    <div id="la-choix" class="choix" hidden></div>
+    <div id="la-form" class="ajout" hidden></div>
+  </div>
+</div>
+
+<!-- Feuille : détail d'un livre -->
+<div class="sheet" id="sheet-liv" hidden>
+  <div class="panel" id="liv-panel"></div>
+</div>
+
 <div class="tabbar"><nav>
   <a href="#accueil" data-v="accueil"><span class="i">⌂</span>Accueil</a>
   <a href="#cinema" data-v="cinema"><span class="i">🎬</span>Cinéma</a>
@@ -113,5 +178,6 @@
 
 <div class="toast" id="toast" hidden></div>
 <script src="/app.js"></script>
+<script src="/livres.js"></script>
 </body>
 </html>

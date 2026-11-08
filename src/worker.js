@@ -44,6 +44,19 @@ async function api(request, env, url) {
   if (path === '/reco' && m === 'GET') return recommander(env, url.searchParams.get('personne') || 'nous');
   if (path === '/reco/refus' && m === 'POST') return refuserReco(env, await request.json());
 
+  // Livres
+  if (path === '/livres' && m === 'GET') return listerLivres(env);
+  if (path === '/livres' && m === 'POST') return ajouterLivre(env, await request.json());
+  if (path === '/livres/recherche') return rechercherLivres(env, url.searchParams.get('q') || '');
+  r = path.match(/^\/livres\/(\d+)$/);
+  if (r && m === 'PATCH') return modifierLivre(env, +r[1], await request.json());
+  if (r && m === 'DELETE') return supprimerLivre(env, +r[1]);
+  r = path.match(/^\/livres\/(\d+)\/statut\/(croco|dauphin|pedro)$/);
+  if (r && m === 'PUT') return poserStatut(env, +r[1], r[2], await request.json());
+  if (r && m === 'DELETE') return retirerStatut(env, +r[1], r[2]);
+  r = path.match(/^\/livres\/(\d+)\/achete$/);
+  if (r && m === 'POST') return marquerAchete(env, +r[1]);
+
   // Diversification de Pedro : documents JSON (journal + réglages), voir public/pedro/shim.js.
   if (path === '/pedro/log' && m === 'GET') {
     const { results } = await env.DB.prepare('SELECT id, json FROM pedro_log ORDER BY cree_le, id').all();
@@ -495,6 +508,239 @@ async function refuserReco(env, { tmdb_id, personne }) {
   for (const p of cibles)
     await env.DB.prepare('INSERT OR IGNORE INTO reco_refus (tmdb_id, personne) VALUES (?,?)').bind(tmdb_id, p).run();
   return json({ ok: true });
+}
+
+/* ---------- Livres ---------- */
+
+const LIVRE_CHAMPS = [
+  'titre',
+  'auteur',
+  'isbn',
+  'isbn13',
+  'genre',
+  'editeur',
+  'pages',
+  'annee',
+  'type',
+  'version',
+  'culte',
+  'reference',
+  'resume',
+  'note_exemplaire',
+  'notes',
+  'couverture_url',
+];
+const STATUTS_LIVRE = ['a_acheter', 'a_lire', 'en_cours', 'lu'];
+
+const SQL_LIVRE = `SELECT l.*,
+  (SELECT json_group_array(json_object('personne', s.personne, 'statut', s.statut, 'note', s.note, 'annee_lu', s.annee_lu, 'commentaire', s.commentaire))
+     FROM livre_statuts s WHERE s.livre_id = l.id) AS statuts
+  FROM livres l`;
+
+function formaterLivre(r) {
+  return { ...r, statuts: JSON.parse(r.statuts || '[]') };
+}
+
+async function listerLivres(env) {
+  const { results } = await env.DB.prepare(`${SQL_LIVRE} ORDER BY l.id DESC`).all();
+  return json(results.map(formaterLivre));
+}
+
+async function lireLivre(env, id) {
+  const r = await env.DB.prepare(`${SQL_LIVRE} WHERE l.id = ?`).bind(id).first();
+  if (!r) throw erreur(404, 'Livre inconnu');
+  return formaterLivre(r);
+}
+
+function nettoyerLivre(corps) {
+  const l = {};
+  for (const c of LIVRE_CHAMPS) {
+    if (!(c in corps)) continue;
+    let v = corps[c];
+    if (typeof v === 'string') v = v.trim() || null;
+    if (['pages', 'annee'].includes(c)) v = v == null || v === '' ? null : Number(v) || null;
+    if (['culte', 'reference'].includes(c)) v = v ? 1 : 0;
+    if (c === 'type' && v && !['fiction', 'essai', 'reference'].includes(v)) throw erreur(400, 'Type inconnu');
+    l[c] = v;
+  }
+  return l;
+}
+
+// corps : les champs du livre + éventuellement `statut: { personne, statut, note, annee_lu, commentaire }`.
+async function ajouterLivre(env, corps) {
+  const l = nettoyerLivre(corps);
+  if (!l.titre) throw erreur(400, 'Titre requis');
+  const cols = Object.keys(l);
+  const r = await env.DB.prepare(
+    `INSERT INTO livres (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')}) RETURNING id`,
+  )
+    .bind(...cols.map((c) => l[c]))
+    .first();
+  if (corps.statut?.personne) await upsertStatut(env, r.id, corps.statut.personne, corps.statut);
+  return json(await lireLivre(env, r.id), 201);
+}
+
+async function modifierLivre(env, id, corps) {
+  const l = nettoyerLivre(corps);
+  const cols = Object.keys(l);
+  if (cols.length) {
+    await env.DB.prepare(
+      `UPDATE livres SET ${cols.map((c) => `${c} = ?`).join(', ')}, modifie_le = datetime('now') WHERE id = ?`,
+    )
+      .bind(...cols.map((c) => l[c]), id)
+      .run();
+  }
+  return json(await lireLivre(env, id));
+}
+
+async function supprimerLivre(env, id) {
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM livre_statuts WHERE livre_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM livres WHERE id = ?').bind(id),
+  ]);
+  return json({ ok: true });
+}
+
+async function upsertStatut(env, livreId, personne, s) {
+  if (!['croco', 'dauphin', 'pedro'].includes(personne)) throw erreur(400, 'Personne inconnue');
+  if (!STATUTS_LIVRE.includes(s.statut)) throw erreur(400, 'Statut inconnu');
+  const note = s.statut === 'lu' && s.note >= 1 && s.note <= 5 ? Math.round(s.note) : null;
+  const annee = s.statut === 'lu' && s.annee_lu ? Number(s.annee_lu) || null : null;
+  await env.DB.prepare(
+    `INSERT INTO livre_statuts (livre_id, personne, statut, note, annee_lu, commentaire, modifie_le)
+     VALUES (?,?,?,?,?,?,datetime('now'))
+     ON CONFLICT(livre_id, personne) DO UPDATE SET statut = excluded.statut, note = excluded.note,
+       annee_lu = excluded.annee_lu, commentaire = excluded.commentaire, modifie_le = excluded.modifie_le`,
+  )
+    .bind(livreId, personne, s.statut, note, annee, (s.commentaire || '').trim().slice(0, 1000) || null)
+    .run();
+}
+
+async function poserStatut(env, id, personne, corps) {
+  await upsertStatut(env, id, personne, corps);
+  return json(await lireLivre(env, id));
+}
+
+async function retirerStatut(env, id, personne) {
+  await env.DB.prepare('DELETE FROM livre_statuts WHERE livre_id = ? AND personne = ?').bind(id, personne).run();
+  return json(await lireLivre(env, id));
+}
+
+// « Acheté » : tout le monde qui voulait l'acheter passe en « à lire ».
+async function marquerAchete(env, id) {
+  await env.DB.prepare(
+    "UPDATE livre_statuts SET statut = 'a_lire', modifie_le = datetime('now') WHERE livre_id = ? AND statut = 'a_acheter'",
+  )
+    .bind(id)
+    .run();
+  return json(await lireLivre(env, id));
+}
+
+// Recherche en ligne : Open Library puis Google Books, sans clé. Éditions françaises d'abord, doublons retirés.
+async function rechercherLivres(env, q) {
+  q = q.trim();
+  if (q.length < 2) return json([]);
+  const cle = `livres:${q.toLowerCase()}`;
+  const cache = await env.DB.prepare(
+    `SELECT json FROM tmdb_cache WHERE cle = ? AND recupere_le > datetime('now', '-${CACHE_JOURS} days')`,
+  )
+    .bind(cle)
+    .first();
+  if (cache) return json(JSON.parse(cache.json));
+
+  const [ol, gb] = await Promise.all([openLibrary(q), googleBooks(q)]);
+  const vus = new Set();
+  const out = [];
+  for (const r of [...ol, ...gb]) {
+    const k = r.isbn13 || `${normaliser(r.titre)}|${normaliser((r.auteur || '').split(/[ ,]/)[0])}`;
+    if (vus.has(k)) continue;
+    vus.add(k);
+    out.push(r);
+  }
+  out.sort((a, b) => (b.fr ? 1 : 0) - (a.fr ? 1 : 0));
+  const res = out.slice(0, 12);
+  await env.DB.prepare(
+    "INSERT INTO tmdb_cache (cle, json, recupere_le) VALUES (?,?,datetime('now')) ON CONFLICT(cle) DO UPDATE SET json = excluded.json, recupere_le = excluded.recupere_le",
+  )
+    .bind(cle, JSON.stringify(res))
+    .run();
+  return json(res);
+}
+
+async function openLibrary(q) {
+  try {
+    const u = new URL('https://openlibrary.org/search.json');
+    u.searchParams.set('q', q);
+    u.searchParams.set('limit', '10');
+    u.searchParams.set(
+      'fields',
+      'title,author_name,first_publish_year,isbn,cover_i,publisher,number_of_pages_median,language',
+    );
+    const r = await fetch(u, { headers: { 'User-Agent': 'PCD (site perso)' } });
+    if (!r.ok) return [];
+    const d = await r.json();
+    return (d.docs || []).map((x) => {
+      const isbn13 = (x.isbn || []).find((i) => i.length === 13) || null;
+      return {
+        source: 'Open Library',
+        titre: x.title,
+        auteur: (x.author_name || []).slice(0, 2).join(', ') || null,
+        annee: x.first_publish_year || null,
+        isbn13,
+        isbn: (x.isbn || []).find((i) => i.length === 10) || null,
+        editeur: (x.publisher || [])[0] || null,
+        pages: x.number_of_pages_median || null,
+        couverture_url: x.cover_i ? `https://covers.openlibrary.org/b/id/${x.cover_i}-M.jpg` : null,
+        resume: null,
+        fr: (x.language || []).includes('fre'),
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+async function googleBooks(q) {
+  try {
+    const u = new URL('https://www.googleapis.com/books/v1/volumes');
+    u.searchParams.set('q', q);
+    u.searchParams.set('maxResults', '10');
+    u.searchParams.set('langRestrict', 'fr');
+    u.searchParams.set('printType', 'books');
+    const r = await fetch(u);
+    if (!r.ok) return [];
+    const d = await r.json();
+    return (d.items || []).map(({ volumeInfo: v }) => {
+      const ids = v.industryIdentifiers || [];
+      return {
+        source: 'Google Books',
+        titre: v.title + (v.subtitle ? ` : ${v.subtitle}` : ''),
+        auteur: (v.authors || []).slice(0, 2).join(', ') || null,
+        annee: v.publishedDate ? Number(v.publishedDate.slice(0, 4)) || null : null,
+        isbn13: ids.find((i) => i.type === 'ISBN_13')?.identifier || null,
+        isbn: ids.find((i) => i.type === 'ISBN_10')?.identifier || null,
+        editeur: v.publisher || null,
+        pages: v.pageCount || null,
+        couverture_url: v.imageLinks?.thumbnail?.replace('http://', 'https://') || null,
+        resume: v.description ? v.description.slice(0, 600) : null,
+        fr: v.language === 'fr',
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+function normaliser(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\b(le|la|les|l|un|une|des|du|de|the|a|an)\b/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /* ---------- Utilitaires ---------- */

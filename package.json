@@ -11,7 +11,10 @@
     "seed:local": "wrangler d1 execute pcd --local --file seed/carnet.sql",
     "seed": "wrangler d1 execute pcd --remote --file seed/carnet.sql",
     "check": "biome check .",
-    "lint:fix": "biome check --write ."
+    "lint:fix": "biome check --write .",
+    "seed:livres:build": "node scripts/import-livres.mjs",
+    "seed:livres:local": "wrangler d1 execute pcd --local --file seed/livres.sql",
+    "seed:livres": "wrangler d1 execute pcd --remote --file seed/livres.sql"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.6",

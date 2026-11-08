@@ -79,3 +79,17 @@ scripts/import-carnet.mjs
 ## Comment marchent les recommandations
 
 Pour une personne, ses films notés 4 ou 5 servent de graines. TMDB donne les films proches de chaque graine ; un candidat marque d'autant plus qu'il revient souvent, que la graine était bien notée et que ses genres ressemblent à ceux que la personne aime. On retire les films déjà vus, à voir ou refusés (« Pas pour moi »). L'onglet « Recos » sur « Tous » croise les deux listes. Les appels TMDB sont mis en cache 7 jours dans D1.
+
+## Livres
+
+Bibliothèque partagée à trois (🐊 Croco, 🐬 Dauphin, 🐦 Pedro) : un livre = une ligne dans `livres`, un statut par personne dans `livre_statuts` (à acheter · à lire · en cours · lu, avec note sur 5, année de lecture et commentaire). Recherche en ligne sans clé (Open Library puis Google Books, éditions françaises d'abord, cache 7 jours). Couvertures Open Library par ISBN.
+
+Import initial (fichiers privés, non versionnés, dans `seed/livres/`) :
+
+```bash
+pnpm seed:livres:build   # export-complet.json (Morgane) + goodreads-croco.csv (Croco) → seed/livres.sql
+pnpm seed:livres:local   # base locale
+pnpm seed:livres         # base de prod
+```
+
+Les doublons entre les deux sources sont fusionnés par ISBN-13, sinon par titre + nom d'auteur normalisés.

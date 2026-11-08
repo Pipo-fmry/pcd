@@ -1,7 +1,7 @@
 /* PCD : front vanilla. Toutes les données viennent de /api (D1). */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const P = { croco: '🐊', dauphin: '🐬' };
+const P = { croco: '🐊', dauphin: '🐬', pedro: '🐦' };
 const VUES = ['accueil', 'cinema', 'livres'];
 
 const etat = {
@@ -49,7 +49,7 @@ async function montrerApp() {
   $('#v-login').hidden = true;
   $('#app').hidden = false;
   try {
-    await chargerFilms();
+    await Promise.all([chargerFilms(), chargerLivres()]);
   } catch (e) {
     toast(e.message);
   }
@@ -77,6 +77,7 @@ function router() {
     a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'),
   );
   if (v === 'cinema') rendreCinema();
+  if (v === 'livres') rendreLivres();
   window.scrollTo(0, 0);
 }
 addEventListener('hashchange', router);
