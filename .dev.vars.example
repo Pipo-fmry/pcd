@@ -1,0 +1,4 @@
+# Copier en .dev.vars pour le dev local. En prod : `wrangler secret put <NOM>`.
+PCD_PIN=0000
+TMDB_API_KEY=
+OMDB_API_KEY=

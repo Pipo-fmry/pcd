@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F8E8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>PCD</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2365743A'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23F4FDAF' font-family='-apple-system,sans-serif' font-weight='800'>P</text></svg>">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<!-- Code d'accès -->
+<section class="view login" id="v-login" hidden>
+  <div class="eyebrow">PCD</div>
+  <h1>Bonjour</h1>
+  <p class="sub">Entre le code pour continuer.</p>
+  <form id="loginform" class="loginform">
+    <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Code" aria-label="Code d'accès">
+    <button class="btn primary" type="submit">Entrer</button>
+    <div class="err" id="loginerr" hidden></div>
+  </form>
+</section>
+
+<div class="app" id="app" hidden>
+  <!-- Accueil -->
+  <section class="view" id="v-accueil" hidden>
+    <div class="eyebrow">Croco &amp; Dauphin</div>
+    <h1>PCD</h1>
+    <p class="sub">Qu'est-ce qu'on fait ?</p>
+    <div class="tiles">
+      <a class="tile cine" href="#cinema"><div class="ico">🎬</div><div><div class="t">Cinéma</div><div class="d">Films vus, à voir, et ce qu'on pourrait aimer</div></div><div class="n" id="n-films"></div></a>
+      <a class="tile pedro" href="/pedro/"><div class="ico">🐦</div><div><div class="t">Diversification de Pedro</div><div class="d">Aliments, semaines, allergènes</div></div><div class="n">→</div></a>
+      <a class="tile livre" href="#livres"><div class="ico">📚</div><div><div class="t">Livres</div><div class="d">Bientôt</div></div><div class="n">0</div></a>
+    </div>
+  </section>
+
+  <!-- Cinéma -->
+  <section class="view" id="v-cinema" hidden>
+    <div class="eyebrow">Cinéma</div>
+    <h1>Films</h1>
+    <div class="seg" id="cine-seg">
+      <button type="button" aria-pressed="true" data-list="vu">Vus</button>
+      <button type="button" aria-pressed="false" data-list="a_voir">À voir</button>
+      <button type="button" aria-pressed="false" data-list="reco">Pour nous</button>
+    </div>
+    <div class="chips" id="cine-chips">
+      <button type="button" class="chip" aria-pressed="true" data-qui="tous">Tous</button>
+      <button type="button" class="chip" aria-pressed="false" data-qui="croco">🐊 Croco</button>
+      <button type="button" class="chip" aria-pressed="false" data-qui="dauphin">🐬 Dauphin</button>
+    </div>
+    <div class="searchrow"><input id="cine-q" type="search" placeholder="Chercher dans la liste…" aria-label="Filtrer les films"></div>
+    <div id="cine-list" class="films"></div>
+    <div id="cine-empty" class="empty" hidden></div>
+    <button type="button" class="fab" id="fab" aria-label="Ajouter un film">+</button>
+  </section>
+
+  <!-- Livres -->
+  <section class="view" id="v-livres" hidden>
+    <div class="eyebrow">Lectures</div>
+    <h1>Livres</h1>
+    <div class="empty"><div class="big">📚</div><div>Rien pour l'instant.</div><div>Même principe que Cinéma quand tu voudras : lus, à lire, notes à deux.</div></div>
+  </section>
+</div>
+
+<!-- Feuille : ajouter un film -->
+<div class="sheet" id="sheet-add" hidden>
+  <div class="panel">
+    <div class="grab"></div>
+    <h2>Ajouter un film</h2>
+    <div class="field"><label for="f-q">Titre</label><input id="f-q" type="search" placeholder="Chercher un film…" autocomplete="off"></div>
+    <div id="f-results" class="results"></div>
+    <div id="f-choix" class="choix" hidden></div>
+    <div class="field"><span class="lab">Statut</span>
+      <div class="seg small" id="f-statut"><button type="button" aria-pressed="true" data-v="vu">Vu</button><button type="button" aria-pressed="false" data-v="a_voir">À voir</button></div>
+    </div>
+    <div class="field"><span class="lab">Ajouté par</span>
+      <div class="seg small" id="f-qui"><button type="button" aria-pressed="true" data-v="croco">🐊 Croco</button><button type="button" aria-pressed="false" data-v="dauphin">🐬 Dauphin</button></div>
+    </div>
+    <div class="field" id="f-notes-wrap"><span class="lab">Notes</span>
+      <div class="rate" data-p="croco"><b>🐊</b><button type="button" data-n="0">0</button><button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="3">3</button><button type="button" data-n="4">4</button><button type="button" data-n="5">5</button></div>
+      <div class="rate" data-p="dauphin"><b>🐬</b><button type="button" data-n="0">0</button><button type="button" data-n="1">1</button><button type="button" data-n="2">2</button><button type="button" data-n="3">3</button><button type="button" data-n="4">4</button><button type="button" data-n="5">5</button></div>
+    </div>
+    <div class="err" id="f-err" hidden></div>
+    <button class="btn primary big" id="f-save" type="button" disabled>Enregistrer</button>
+    <button class="btn" type="button" data-close>Annuler</button>
+  </div>
+</div>
+
+<!-- Feuille : détail d'un film -->
+<div class="sheet" id="sheet-film" hidden>
+  <div class="panel" id="film-panel"></div>
+</div>
+
+<div class="tabbar"><nav>
+  <a href="#accueil" data-v="accueil"><span class="i">⌂</span>Accueil</a>
+  <a href="#cinema" data-v="cinema"><span class="i">🎬</span>Cinéma</a>
+  <a href="/pedro/" data-v="pedro"><span class="i">🐦</span>Pedro</a>
+  <a href="#livres" data-v="livres"><span class="i">📚</span>Livres</a>
+</nav></div>
+
+<div class="toast" id="toast" hidden></div>
+<script src="/app.js"></script>
+</body>
+</html>
