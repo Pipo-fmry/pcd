@@ -89,7 +89,7 @@ b {
   margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(150px + env(safe-area-inset-bottom, 0px));
+  padding-block: calc(28px + env(safe-area-inset-top, 0px)) calc(150px + env(safe-area-inset-bottom, 0px));
 }
 
 /* En-tête */

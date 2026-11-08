@@ -462,8 +462,7 @@ function dayPlanHtml(i, ws){
     if(!x.on || !x.items.length) return `<div class="maint" style="opacity:.6"><span class="dayname">${esc(dn)}</span><span class="note" style="flex:1">Pas de purée : lait seulement</span></div>`;
     return `<div class="maint${isT?' today':''}"><span class="dayname" style="font-weight:${isT?600:400}">${esc(dn)}${isT?'<br><span class="note">aujourd\'hui</span>':''}</span><span class="items">${x.items.map(it=>{const ok=it.done;return `<span data-log="${it.id}" data-date="${fd(x.date)}">${ok?'✅':'◻️'} ${label(it)}</span>`;}).join('')}</span></div>`;
   }).join('');
-  return `<div style="margin-top:14px"><div class="row between"><b>Programme de la semaine</b><span class="note">suggestion, à adapter</span></div>
-    <div class="note">Touchez un aliment pour noter le repas : il se coche ✅. Plusieurs aliments le même jour = de petites quantités de chacun.</div>
+  return `<div style="margin-top:14px"><b>Programme de la semaine</b>
     <div style="margin-top:6px">${rows}</div>
   </div>`;
 }
@@ -519,7 +518,7 @@ function todayCard(sch,slot){
   const whoRow=`<div class="row" style="margin-top:10px;gap:6px"><span class="note">Qui note :</span><input type="text" id="whoQuick" value="${esc(who)}" placeholder="ton prénom" style="width:140px;padding:6px 9px;font-size:14px"></div>`;
   if(slot.k===-1){
     const first=weekStatus(0,sch[0].start).find(x=>x.items.length);
-    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><h2>On commence ${frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'})}</h2><p class="note" style="margin:6px 0 0">Au programme ce jour-là : ${first.items.map(it=>esc(fname(it.id))).join(', ')}, ${esc(PLAN[0].qte.toLowerCase())}</p>${whoRow}</div>`;
+    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><h2>On commence ${frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'})}</h2><p class="note" style="margin:6px 0 0">Au programme : ${first.items.map(it=>esc(fname(it.id))).join(', ')}, ${esc(PLAN[0].qte.toLowerCase())}</p>${whoRow}</div>`;
   }
   const s=slot.s;
   if(s.after || s.pause){
@@ -542,19 +541,17 @@ function todayCard(sch,slot){
   if(items.length) body+=items.map(it=>todayItemRow(it,t)).join('');
   else body+=`<p class="note" style="margin:6px 0">Pas de purée prévue aujourd'hui : lait seulement.</p>`;
   if(missed.length){
-    body+=`<div style="margin-top:12px"><b>À rattraper</b> <span class="note">· si vous avez le temps, sinon ce n'est pas grave</span></div>`;
+    body+=`<div style="margin-top:12px"><b>À rattraper</b></div>`;
     body+=missed.slice(0,4).map(m=>todayItemRow(m.it,t,frd(m.x.date,{weekday:'long'}))).join('');
   }
   const p=PLAN[s.i];
   return html+`<div class="card now"><div class="row between"><div><div class="kicker">Aujourd'hui · ${esc(frd(t,{weekday:'long',day:'numeric',month:'long'}))}</div></div><span class="note">Sem. ${s.i+1}</span></div>
     <div class="note" style="margin:4px 0 6px"><b>Quantité :</b> ${esc(p.qte)}</div>
     ${body}
-    <div class="note" style="margin-top:8px">😋 aime · 😐 mitigé · 🙅 refuse — un geste suffit. ⋯ pour ajouter une réaction ou une note.</div>
-    ${whoRow}</div>`;
+        ${whoRow}</div>`;
 }
 
 
-const SOURCES = `<p class="note" style="text-align:center;margin-top:18px">Sources : <a href="https://santepubliquefrance.fr/content/download/766077/4844471?version=1">Santé publique France</a> · <a href="https://www.espghan.org/dam/jcr%3Aea5c9b57-9315-44b7-b9a0-149511b96654/ESPGHAN%20Infant%20Feeding%20Campaign%20-%20Guidance%20Summary.pdf">ESPGHAN</a> · <a href="https://researchnow.flinders.edu.au/en/publications/guidance-for-healthy-complementary-feeding-practices-for-allergy-/">EAACI 2025</a> · <a href="https://eprints.whiterose.ac.uk/143246/">Barends 2019</a> · <a href="https://community.kidswithfoodallergies.org/blog/new-guidelines-for-early-introduction-of-peanut">LEAP</a><br>Cet outil ne remplace pas l'avis de votre pédiatre.</p>`;
 
 /* ---------- AUJOURD'HUI ---------- */
 function vToday(){
@@ -570,13 +567,13 @@ function vToday(){
   }
   html+=refus();
   html+=recentLog();
-  return html+SOURCES;
+  return html;
 }
 
 function recentLog(){
   if(!S.entries.length) return '';
   const list=S.entries.slice().sort((a,b)=>(b.date+(b.ts||'')).localeCompare(a.date+(a.ts||''))).slice(0,15);
-  return `<details class="card" style="padding:12px 16px"><summary style="cursor:pointer"><b>Derniers repas notés</b> <span class="note">(pour corriger une erreur)</span></summary>
+  return `<details class="card" style="padding:12px 16px"><summary style="cursor:pointer"><b>Derniers repas notés</b></summary>
    ${list.map(e=>{const av=AVIS[e.avis]||{e:'•'}; const rx=REAC[e.reac];
      const bits=[frd(pd(e.date),{weekday:'short',day:'numeric',month:'short'}),e.who?('par '+e.who):'',rx&&e.reac!=='aucune'?rx.n:'',e.note||''].filter(Boolean);
      return `<div class="log"><span class="em">${av.e}</span><div style="flex:1"><b>${esc(e.foodName||fname(e.food))}</b><div class="meta">${bits.map(esc).join(' · ')}</div></div><button class="btn ghost sm" data-del="${esc(e.id)}" title="Supprimer">✕</button></div>`;}).join('')}
@@ -606,9 +603,9 @@ function vPlanning(){
   const st=sch[0].start; const end=add(sch[sch.length-1].start,-1);
   const b=pd(S.settings.birth); const six=b?new Date(b.getFullYear(),b.getMonth()+6,b.getDate()):null;
   const planned=new Set(); PLAN.forEach((p,i)=>weekFoods(i).forEach(id=>planned.add(id)));
-  let html=`<div class="card soft"><h2>Les 2 mois</h2><div class="note" style="margin-top:4px">${frd(st,{day:'numeric',month:'long'})} → ${frd(end,{day:'numeric',month:'long'})} · ${planned.size} aliments et ${PLAN.filter(p=>p.alg).length} allergènes. Ouvrez une semaine pour avancer ◀, reculer ▶, retirer ✕ ou ajouter un aliment.</div></div>`;
+  let html=`<div class="card soft"><h2>Les 2 mois</h2><div class="note" style="margin-top:4px">${frd(st,{day:'numeric',month:'long'})} → ${frd(end,{day:'numeric',month:'long'})} · ${planned.size} aliments · ${PLAN.filter(p=>p.alg).length} allergènes</div></div>`;
   sch.forEach((x,k)=>{
-    if(x.after){ html+=`<div class="card soft" style="padding:12px 16px"><span class="kicker">À partir du ${frd(x.start)}${six?` · 6 mois le ${frd(six)}`:''}</span><br><b>La suite : on l'adaptera ensemble</b><div class="note">7 allergènes restants, morceaux à attraper, plat familial adapté.</div></div>`; return; }
+    if(x.after){ html+=`<div class="card soft" style="padding:12px 16px"><span class="kicker">À partir du ${frd(x.start)}${six?` · 6 mois le ${frd(six)}`:''}</span><br><b>La suite</b><div class="note">7 allergènes restants, morceaux, plat familial.</div></div>`; return; }
     if(x.pause){ html+=`<div class="card" style="padding:12px 16px;opacity:.85"><div class="row between"><span><span class="kicker">${frd(x.start)} → ${frd(add(x.start,6))}</span><br><b>⏸ Semaine de pause</b> <span class="note">· aliments connus + entretien</span></span><button class="btn sm ghost" data-unpause="${x.i}">Retirer</button></div></div>`; return; }
     const i=x.i, p=PLAN[i], foods=weekFoods(i), a=ageAt(x.start);
     const tasted=foods.filter(id=>stat(id).n).length; const algOk=p.alg?groupStat(FMAP[p.alg].alg).ok>=3:true;
@@ -632,7 +629,7 @@ function vPlanning(){
         ${(isNow||!past)?`<div style="margin-top:10px"><button class="btn sm ghost" data-pause="${i}">⏸ Insérer une semaine de pause avant celle-ci (tout le reste recule d'une semaine)</button></div>`:''}
       </div></details>`;
   });
-  return html+SOURCES;
+  return html;
 }
 
 function refus(){
@@ -640,7 +637,7 @@ function refus(){
   const items=FOODS.filter(f=>!f.alg && stat(f.id).st==='ref').map(f=>{const s=stat(f.id); const nx=add(pd(s.lastRef.date),2);
     return {id:f.id,txt: s.refus>=10?'10 essais : faites une pause de quelques semaines':`Essai n°${s.refus+1}${nx>t?` à partir du ${frd(nx)}`:', dès que possible'} · changez la présentation`};});
   if(!items.length) return '';
-  return `<div class="card"><h3>Refus à retenter</h3><div class="note">Normal : il faut souvent 8 à 10 essais.</div>
+  return `<div class="card"><h3>Refus à retenter</h3>
    <div style="margin-top:6px">${items.map(x=>`<div class="maint"><span><b>${esc(fname(x.id))}</b><br><span class="note">${esc(x.txt)}</span></span><button class="btn sm sec" data-log="${x.id}">Noter</button></div>`).join('')}</div></div>`;
 }
 
@@ -650,7 +647,7 @@ function vFoods(){
   const filters={tous:'Tous',todo:'À tester',alg:'Allergènes'};
   let html=`<div class="filter">${Object.entries(filters).map(([k,v])=>`<button class="chip ${FF===k?'on':''}" data-ff="${k}">${v}</button>`).join('')}</div>`;
   const tested=FOODS.filter(f=>stat(f.id).n).length;
-  html+=`<div class="note" style="margin-bottom:10px">${tested} aliments goûtés sur ${FOODS.length}. Touchez un aliment pour noter une dégustation.</div>`;
+  html+=`<div class="note" style="margin-bottom:10px">${tested} goûtés sur ${FOODS.length}</div>`;
   Object.entries(CATS).forEach(([c,cn])=>{
     const list=FOODS.filter(f=>f.c===c).filter(f=>{const s=stat(f.id);
       if(FF==='goute') return s.n>0; if(FF==='todo') return !s.n; if(FF==='ref') return s.st==='ref'; if(FF==='alg') return !!f.alg; return true;});

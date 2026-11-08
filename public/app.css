@@ -53,7 +53,7 @@ body {
   min-height: 100%;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: calc(12px + env(safe-area-inset-top, 0px)) calc(96px + env(safe-area-inset-bottom, 0px));
+  padding-block: calc(28px + env(safe-area-inset-top, 0px)) calc(96px + env(safe-area-inset-bottom, 0px));
 }
 [hidden] {
   /* biome-ignore lint/complexity/noImportantStyles: les vues ont un display flex/grid, hidden doit l'emporter */
