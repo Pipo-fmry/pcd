@@ -56,10 +56,10 @@ pnpm db:migrate                            # migrations sur la base de prod
 pnpm wrangler secret put PCD_PIN
 pnpm wrangler secret put TMDB_API_KEY
 pnpm wrangler secret put OMDB_API_KEY
-pnpm deploy
+pnpm run deploy
 ```
 
-Ensuite, à chaque changement : `pnpm deploy`. L'URL est de la forme `https://pcd.<compte>.workers.dev` (affichée à la fin du déploiement).
+Ensuite, à chaque changement : `pnpm run deploy`. L'URL est de la forme `https://pcd.<compte>.workers.dev` (affichée à la fin du déploiement).
 
 Nouvelle migration : ajouter un fichier `migrations/000N_nom.sql`, puis `pnpm db:migrate:local` et `pnpm db:migrate`.
 

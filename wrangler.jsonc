@@ -12,7 +12,7 @@
     {
       "binding": "DB",
       "database_name": "pcd",
-      "database_id": "A_REMPLIR_APRES_wrangler_d1_create",
+      "database_id": "e2ae7726-0003-4643-a4bd-d9bf05a3671d",
       "migrations_dir": "migrations"
     }
   ],
