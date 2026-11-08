@@ -232,6 +232,52 @@ a {
 .searchrow {
   margin: 6px 0 12px;
 }
+.sortrow {
+  display: flex;
+  gap: 8px;
+  margin: 2px 0 8px;
+}
+.sortrow select {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 28px 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background:
+    var(--card)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236b6f5e' stroke-width='1.8'/%3E%3C/svg%3E")
+    no-repeat right 12px center / 11px;
+  color: var(--fg);
+  appearance: none;
+  -webkit-appearance: none;
+}
+.sortrow select.actif {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 22px;
+  margin-bottom: 12px;
+}
+.logo.small {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  margin: 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand h1 {
+  margin: 0;
+}
 .searchrow input,
 .field input,
 .field select,

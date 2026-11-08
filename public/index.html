@@ -16,6 +16,7 @@
 
 <!-- Code d'accès -->
 <section class="view login" id="v-login" hidden>
+  <img class="logo" src="/icon.svg" alt="" width="84" height="84">
   <div class="eyebrow">PCD</div>
   <h1>Bonjour</h1>
   <p class="sub">Entre le code pour continuer.</p>
@@ -29,8 +30,7 @@
 <div class="app" id="app" hidden>
   <!-- Accueil -->
   <section class="view" id="v-accueil" hidden>
-    <div class="eyebrow">Croco &amp; Dauphin</div>
-    <h1>PCD</h1>
+    <div class="brand"><img class="logo small" src="/icon.svg" alt="" width="48" height="48"><div><div class="eyebrow">Croco &amp; Dauphin</div><h1>PCD</h1></div></div>
     <p class="sub">Qu'est-ce qu'on fait ?</p>
     <div class="tiles">
       <a class="tile cine" href="#cinema"><div class="ico">🎬</div><div><div class="t">Cinéma</div><div class="d">Films vus, à voir, et ce qu'on pourrait aimer</div></div><div class="n" id="n-films"></div></a>
@@ -52,6 +52,16 @@
       <button type="button" class="chip" aria-pressed="true" data-qui="tous">Tous</button>
       <button type="button" class="chip" aria-pressed="false" data-qui="croco">🐊 Croco</button>
       <button type="button" class="chip" aria-pressed="false" data-qui="dauphin">🐬 Dauphin</button>
+    </div>
+    <div class="sortrow" id="cine-sortrow">
+      <select id="cine-tri" aria-label="Trier">
+        <option value="recent">Derniers ajoutés</option>
+        <option value="note">Meilleure note</option>
+        <option value="annee">Année ↓</option>
+        <option value="annee_asc">Année ↑</option>
+        <option value="titre">Titre A→Z</option>
+      </select>
+      <select id="cine-genre" aria-label="Genre"><option value="">Tous les genres</option></select>
     </div>
     <div class="searchrow"><input id="cine-q" type="search" placeholder="Chercher dans la liste…" aria-label="Filtrer les films"></div>
     <div id="cine-list" class="films"></div>

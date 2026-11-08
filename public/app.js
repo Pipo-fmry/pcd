@@ -9,6 +9,8 @@ const etat = {
   liste: 'vu',
   qui: 'tous',
   q: '',
+  tri: 'recent',
+  genre: '',
   reco: {},
   ajout: { choix: null, statut: 'vu', qui: 'croco', notes: {} },
 };
@@ -163,29 +165,59 @@ function rendreCinema() {
   $$('#cine-chips .chip').forEach((b) => b.setAttribute('aria-pressed', b.dataset.qui === etat.qui));
   $('#fab').hidden = etat.liste === 'reco';
   $('.searchrow').hidden = etat.liste === 'reco';
+  $('#cine-sortrow').hidden = etat.liste === 'reco';
   if (etat.liste === 'reco') return rendreReco();
 
   let films = etat.films.filter((f) => f.statut === etat.liste);
   if (etat.qui !== 'tous') {
     films =
       etat.liste === 'vu'
-        ? films
-            .filter((f) => f['note_' + etat.qui] != null)
-            .sort((a, b) => b['note_' + etat.qui] - a['note_' + etat.qui])
+        ? films.filter((f) => f['note_' + etat.qui] != null)
         : films.filter((f) => f.ajoute_par === etat.qui);
   }
+  majGenres(films);
+  if (etat.genre) films = films.filter((f) => f.genres.includes(etat.genre));
   if (etat.q) {
     const q = etat.q.toLowerCase();
     films = films.filter((f) =>
       [f.titre, f.titre_original, f.realisateur, ...f.acteurs, ...f.genres].join(' ').toLowerCase().includes(q),
     );
   }
+  films = trier(films);
   list.innerHTML = films.map(filmCarte).join('');
   empty.hidden = films.length > 0;
   empty.innerHTML =
     etat.liste === 'vu'
       ? '<div class="big">🎬</div><div>Aucun film ici.</div><div>Appuie sur + pour ajouter un film vu.</div>'
       : '<div class="big">🍿</div><div>Rien à voir pour l\'instant.</div><div>Appuie sur + pour ajouter une envie.</div>';
+}
+
+// Note de tri : celle de la personne choisie, sinon la moyenne des notes présentes.
+function noteTri(f) {
+  if (etat.qui !== 'tous') return f['note_' + etat.qui] ?? -1;
+  const n = ['croco', 'dauphin'].map((p) => f['note_' + p]).filter((x) => x != null);
+  return n.length ? n.reduce((a, b) => a + b, 0) / n.length : -1;
+}
+function trier(films) {
+  const cmp = {
+    recent: () => 0,
+    note: (a, b) => noteTri(b) - noteTri(a) || (b.annee || 0) - (a.annee || 0),
+    annee: (a, b) => (b.annee || 0) - (a.annee || 0),
+    annee_asc: (a, b) => (a.annee || 9999) - (b.annee || 9999),
+    titre: (a, b) => a.titre.localeCompare(b.titre, 'fr'),
+  }[etat.tri];
+  return etat.tri === 'recent' ? films : [...films].sort(cmp);
+}
+// Le menu des genres ne propose que ceux présents dans la liste courante.
+function majGenres(films) {
+  const sel = $('#cine-genre');
+  const genres = [...new Set(films.flatMap((f) => f.genres))].sort((a, b) => a.localeCompare(b, 'fr'));
+  if (etat.genre && !genres.includes(etat.genre)) etat.genre = '';
+  sel.innerHTML =
+    '<option value="">Tous les genres</option>' +
+    genres.map((g) => `<option value="${esc(g)}"${g === etat.genre ? ' selected' : ''}>${esc(g)}</option>`).join('');
+  sel.classList.toggle('actif', !!etat.genre);
+  $('#cine-tri').classList.toggle('actif', etat.tri !== 'recent');
 }
 
 async function rendreReco() {
@@ -235,6 +267,14 @@ $('#cine-chips').addEventListener('click', (e) => {
     etat.qui = b.dataset.qui;
     rendreCinema();
   }
+});
+$('#cine-tri').addEventListener('change', (e) => {
+  etat.tri = e.target.value;
+  rendreCinema();
+});
+$('#cine-genre').addEventListener('change', (e) => {
+  etat.genre = e.target.value;
+  rendreCinema();
 });
 $('#cine-q').addEventListener('input', (e) => {
   etat.q = e.target.value.trim();
