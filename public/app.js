@@ -320,7 +320,7 @@ function ouvrirFilm(id) {
     try {
       const body = { statut, notes };
       const d = $('#d-date');
-      if (d && d.value) body.vu_le = d.value;
+      if (d?.value) body.vu_le = d.value;
       await api(`/films/${id}`, { method: 'PATCH', body });
       fermer();
       etat.reco = {};
