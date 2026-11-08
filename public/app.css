@@ -95,11 +95,14 @@ a {
 .login {
   display: grid;
   align-content: center;
+  justify-items: center;
+  text-align: center;
 }
 .loginform {
   display: grid;
   gap: 10px;
-  max-width: 320px;
+  width: 100%;
+  max-width: 240px;
 }
 .loginform input {
   font: inherit;

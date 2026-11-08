@@ -46,7 +46,11 @@ function montrerLogin() {
 async function montrerApp() {
   $('#v-login').hidden = true;
   $('#app').hidden = false;
-  await chargerFilms();
+  try {
+    await chargerFilms();
+  } catch (e) {
+    toast(e.message);
+  }
   router();
 }
 $('#loginform').addEventListener('submit', async (e) => {
@@ -395,10 +399,11 @@ $('#f-q').addEventListener('input', () => {
   timerRecherche = setTimeout(async () => {
     try {
       const res = await api('/tmdb/search?q=' + encodeURIComponent(q));
+      etat.ajout.resultats = res;
       $('#f-results').innerHTML =
         res
           .map(
-            (r) => `<button type="button" class="result" data-r='${esc(JSON.stringify(r))}'>
+            (r, i) => `<button type="button" class="result" data-i="${i}">
         ${r.affiche_url ? `<img src="${r.affiche_url}" alt="">` : '<div class="ph"></div>'}<div><div class="t">${esc(r.titre)}</div><div class="y">${r.annee || ''}${r.titre_original !== r.titre ? ` · ${esc(r.titre_original)}` : ''}</div></div></button>`,
           )
           .join('') ||
@@ -417,7 +422,7 @@ $('#f-results').addEventListener('click', (e) => {
   }
   const b = e.target.closest('.result');
   if (!b) return;
-  choisir(JSON.parse(b.dataset.r));
+  choisir(etat.ajout.resultats[Number(b.dataset.i)]);
 });
 function choisir(r) {
   etat.ajout.choix = r;

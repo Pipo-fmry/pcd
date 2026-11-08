@@ -4,126 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pedro · PCD</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#F6F8E8; --card:#FFFFFF; --ink:#330F0A; --muted:#6B6F5E; --line:#E3E6CF;
-  --sage:#65743A; --sage-l:#E9EEDA; --peach:#B8923A; --peach-l:#F7EFCF;
-  --butter:#EFDD8D; --red:#A8402E; --red-l:#F6E0DA; --blue:#394F49; --blue-l:#E1E9E6;
-  --r:14px;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:600;margin:0;letter-spacing:-.01em}
-h1{font-size:26px} h2{font-size:20px} h3{font-size:16.5px}
-.wrap{max-width:860px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(170px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.sub{color:var(--muted);font-size:14px}
-.sync{font-size:12px;color:var(--muted);padding:3px 9px;border:1px solid var(--line);border-radius:99px;background:#fff;white-space:nowrap}
-nav.tabs{display:flex;gap:4px;margin:18px 0 14px;background:#E3E6CF;padding:4px;border-radius:12px;overflow-x:auto}
-nav.tabs a{flex:1;text-align:center;padding:8px 10px;border-radius:9px;color:var(--muted);text-decoration:none;font-weight:500;font-size:14px;white-space:nowrap}
-nav.tabs a.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.card.soft{background:#FBFCF3}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.between{justify-content:space-between}
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:3px 9px;border-radius:99px;background:#ECEFDC;color:var(--ink);white-space:nowrap}
-.pill.sage{background:var(--sage-l);color:#3F4A22}.pill.peach{background:var(--peach-l);color:#6E5414}
-.pill.red{background:var(--red-l);color:var(--red)}.pill.blue{background:var(--blue-l);color:var(--blue)}
-.pill.butter{background:var(--butter);color:#6E5414}
-.btn{font:inherit;font-weight:600;border:0;border-radius:11px;padding:10px 14px;cursor:pointer;background:var(--ink);color:#fff}
-.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn.sm{padding:6px 10px;font-size:13px;border-radius:9px}
-.btn.ghost{background:transparent;color:var(--muted);border:0;padding:6px 8px;font-weight:500}
-.fab{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 6px 20px rgba(51,15,10,.25);padding:14px 18px;border-radius:99px;font-size:15px}
-.weekhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
-.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
-.foods{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
-.food{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:4px}
-.food:hover{border-color:#C9CFA8}
-.food .nm{font-weight:600}
-.food .st{font-size:12.5px;color:var(--muted)}
-.food.done{background:var(--sage-l);border-color:#C5CFA0}
-.food.ref{background:var(--peach-l);border-color:#E8DBA6}
-.food.rx{background:var(--red-l);border-color:#E6C2B8}
-.alg{border:1px solid #E0CD7A;background:#FBF6DF;border-radius:12px;padding:12px;margin-top:10px}
-.alg ol{margin:6px 0 4px 18px;padding:0}
-.alg li{margin:2px 0}
-.steps{display:flex;gap:6px;margin-top:6px}
-.dot{width:26px;height:26px;border-radius:50%;border:2px solid #E0CD7A;display:grid;place-items:center;font-size:12px;font-weight:600;color:#8D7430;background:#fff}
-.dot.ok{background:var(--sage);border-color:var(--sage);color:#fff}
-.dot.rx{background:var(--red);border-color:var(--red);color:#fff}
-.note{font-size:13.5px;color:var(--muted)}
-ul.tight{margin:6px 0 0 18px;padding:0} ul.tight li{margin:3px 0}
-.progress{display:flex;gap:4px;margin-top:10px}
-.progress span{flex:1;height:6px;border-radius:9px;background:#E3E6CF}
-.progress span.past{background:#C5CFA0}.progress span.now{background:var(--sage)}
-.progress span.pause{background:repeating-linear-gradient(45deg,#E3E6CF,#E3E6CF 3px,#fff 3px,#fff 6px)}
-details.week{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:8px}
-details.week>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;align-items:center}
-details.week>summary::-webkit-details-marker{display:none}
-details.week[open]>summary{border-bottom:1px solid var(--line)}
-details.week .in{padding:4px 14px 14px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:640px){.grid2{grid-template-columns:1fr}}
-.maint{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);gap:8px}
-.maint:last-child{border-bottom:0}
-.bar{display:flex;gap:3px}.bar i{width:16px;height:8px;border-radius:4px;background:#E3E6CF;display:block}.bar i.on{background:var(--sage)}
-.log{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}
-.log:last-child{border-bottom:0}
-.log .em{font-size:20px;width:28px;text-align:center}
-.log .meta{font-size:12.5px;color:var(--muted)}
-.dayh{font-weight:600;margin:14px 0 2px;font-size:13px;color:var(--muted);text-transform:capitalize}
-.filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.chip{font:inherit;font-size:13.5px;padding:7px 11px;border-radius:99px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
-.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-.chip.on.g{background:var(--sage);border-color:var(--sage)}
-.chip.on.o{background:var(--peach);border-color:var(--peach)}
-.chip.on.r{background:var(--red);border-color:var(--red)}
-.modal-bg{position:fixed;inset:0;background:rgba(51,15,10,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
-.modal-bg.show{display:flex}
-.modal{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px 22px}
-@media (min-width:700px){.modal-bg{align-items:center}.modal{border-radius:20px}}
-.fld{margin-top:14px}
-.fld>label,.lab{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
-input[type=text],input[type=date],textarea,select{font:inherit;width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
-textarea{min-height:60px;resize:vertical}
-.warn{background:var(--red-l);color:#7A2E22;border-radius:12px;padding:10px 12px;font-size:14px;margin-top:10px}
-.info{background:var(--blue-l);color:#2A3B36;border-radius:12px;padding:10px 12px;font-size:14px}
-.ok{background:var(--sage-l);color:#3F4A22;border-radius:12px;padding:10px 12px;font-size:14px}
-.prose h3{margin:18px 0 6px}.prose p{margin:6px 0}.prose ul{margin:6px 0 6px 18px;padding:0}.prose li{margin:3px 0}
-table.q{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
-table.q td,table.q th{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
-table.q th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.check{display:flex;gap:9px;align-items:flex-start;padding:5px 0;cursor:pointer}
-.check input{margin-top:4px;accent-color:var(--sage);width:17px;height:17px}
-.muted{color:var(--muted)}
-.hide{display:none!important}
-a{color:var(--blue)}
-.sea{font-size:11px;color:#3F4A22}
-.foodpick{display:flex;flex-wrap:wrap;gap:6px;max-height:210px;overflow:auto;padding:2px}
-.empty{color:var(--muted);text-align:center;padding:24px 8px}
-
-/* Barre d'onglets PCD */
-.pcd-tabbar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:45;padding:6px max(16px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.pcd-tabbar nav{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
-.pcd-tabbar a{display:grid;justify-items:center;gap:2px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600;padding:4px 0;font-family:Inter,system-ui,sans-serif}
-.pcd-tabbar a .i{font-size:22px;line-height:1}
-.pcd-tabbar a[aria-current="page"]{color:var(--sage)}
-.modal-bg{z-index:50}
-</style>
+<meta name="theme-color" content="#F6F8E8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/pedro/pedro.css">
 </head>
 <body>
 <div class="wrap">
   <header class="top">
     <div>
-      <h1 id="title">La diversification de bébé</h1>
+      <div class="eyebrow">🐦 Pedro</div>
+      <h1 id="title">Diversification</h1>
       <div class="sub" id="agebar">…</div>
     </div>
-    <div class="row">
+    <div class="row" style="gap:8px;flex-wrap:nowrap">
       <span class="sync" id="sync">Connexion…</span>
-      <button class="btn ghost" id="openSettings" title="Réglages">⚙︎ Réglages</button>
+      <button type="button" class="iconbtn" id="openSettings" aria-label="Réglages" title="Réglages">⚙︎</button>
     </div>
   </header>
 
@@ -136,7 +34,7 @@ a{color:var(--blue)}
   <main id="view"></main>
 </div>
 
-<button class="btn fab" id="fab">＋ Noter un repas</button>
+<button type="button" class="btn fab" id="fab">＋ Noter un repas</button>
 
 <div class="modal-bg" id="mbg"><div class="modal" id="modal"></div></div>
 
@@ -324,24 +222,24 @@ const DEF = {name:'',birth:'2026-07-05',start:'2026-11-09',pauses:[],extra:{},re
 const S = {entries:[],settings:{...DEF},mode:'loading'};
 let DB=null;
 const LS = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-function setSync(t){document.getElementById('sync').textContent=t;}
+function setSync(t,cls){const el=document.getElementById('sync');el.textContent=t;el.className='sync '+(cls||'');}
 
 async function initStore(){
   render();
-  let timer=setTimeout(()=>setSync('Données pas encore joignables…'),10000);
+  let timer=setTimeout(()=>setSync('Hors ligne','ko'),10000);
   let db=null;
   try{ if(window.claude && window.claude.use) db = await window.claude.use('db'); }catch(e){ db=null; }
   if(!db){
     clearTimeout(timer); S.mode='local';
     S.entries=LS.get('div_entries',[]); S.settings={...DEF,...LS.get('div_settings',{})};
-    setSync('Enregistré sur cet appareil'); render(); return;
+    setSync('Sur cet appareil','ok'); render(); return;
   }
   DB=db; S.mode='db';
   DB.collection('log').onSnapshot(snap=>{
     S.entries=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!snap.metadata.fromCache){clearTimeout(timer); setSync('Partagé · synchronisé ✓');}
+    if(!snap.metadata.fromCache){clearTimeout(timer); setSync('Synchronisé','ok');}
     render();
-  }, e=>{clearTimeout(timer); setSync('Synchro indisponible');});
+  }, e=>{clearTimeout(timer); setSync('Synchro en panne','ko');});
   DB.doc('settings/baby').onSnapshot(s=>{
     if(s.exists) S.settings={...DEF,...s.data()};
     render();
@@ -360,8 +258,7 @@ function toastUndo(ids,msg){
   document.querySelectorAll('.toast').forEach(x=>x.remove()); clearTimeout(toastTimer);
   if(!ids.length) return;
   const el=document.createElement('div'); el.className='toast';
-  el.style.cssText='position:fixed;left:16px;right:16px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:60;max-width:520px;margin:0 auto;background:var(--ink);color:#fff;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.2)';
-  el.innerHTML=`<span>${esc(msg)}</span><button class="btn sm" style="background:#fff;color:var(--ink)">Annuler</button>`;
+  el.innerHTML=`<span>${esc(msg)}</span><button type="button" class="btn sm">Annuler</button>`;
   el.querySelector('button').onclick=async()=>{ el.remove(); for(const id of ids){ await delEntry(id); } };
   document.body.appendChild(el); toastTimer=setTimeout(()=>el.remove(),7000);
 }
@@ -383,7 +280,7 @@ function saveSettings(patch){
   const snap=JSON.parse(JSON.stringify(S.settings));
   saving=saving.then(async()=>{ try{ if(DB) await DB.doc('settings/baby').set(snap); else LS.set('div_settings',snap);}catch(e){ alertBox('Réglages non enregistrés.'); } });
 }
-function alertBox(msg){ const el=document.createElement('div'); el.className='warn'; el.style.cssText='position:fixed;left:16px;right:16px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:60;max-width:560px;margin:0 auto'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
+function alertBox(msg){ const el=document.createElement('div'); el.className='warn alertbox'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
 
 /* ================= CALCULS ================= */
 function schedule(){
@@ -440,7 +337,7 @@ function render(){
   document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===TAB));
   const a=ageAt(today());
   const nm=S.settings.name?esc(S.settings.name):'bébé';
-  document.getElementById('title').textContent = S.settings.name? `La diversification de ${S.settings.name}` : 'La diversification de bébé';
+  document.getElementById('title').textContent = S.settings.name? `Diversification de ${S.settings.name}` : 'Diversification';
   const st=pd(S.settings.start); const t=today();
   let extra='';
   if(st){ const d=diff(st,t); extra = d<0 ? ` · démarrage dans ${-d} jour${-d>1?'s':''} (${frd(st,{weekday:'long',day:'numeric',month:'long'})})` : ` · jour ${d+1} de diversification`; }
@@ -562,8 +459,8 @@ function dayPlanHtml(i, ws){
   const rows=dp.map(x=>{
     const dn=frd(x.date,{weekday:'short',day:'numeric'});
     const isT=fd(x.date)===fd(t);
-    if(!x.on || !x.items.length) return `<div class="maint" style="opacity:.6"><span style="min-width:62px;text-transform:capitalize">${esc(dn)}</span><span class="note" style="flex:1">Pas de purée : lait seulement</span></div>`;
-    return `<div class="maint" style="${isT?'background:#F4F8F1;border-radius:8px;padding-left:6px':''}"><span style="min-width:62px;text-transform:capitalize;font-weight:${isT?600:400}">${esc(dn)}${isT?'<br><span class="note">aujourd\'hui</span>':''}</span><span style="flex:1;display:flex;flex-direction:column;gap:4px">${x.items.map(it=>{const ok=it.done;return `<span data-log="${it.id}" data-date="${fd(x.date)}" style="cursor:pointer">${ok?'✅':'◻️'} ${label(it)}</span>`;}).join('')}</span></div>`;
+    if(!x.on || !x.items.length) return `<div class="maint" style="opacity:.6"><span class="dayname">${esc(dn)}</span><span class="note" style="flex:1">Pas de purée : lait seulement</span></div>`;
+    return `<div class="maint${isT?' today':''}"><span class="dayname" style="font-weight:${isT?600:400}">${esc(dn)}${isT?'<br><span class="note">aujourd\'hui</span>':''}</span><span class="items">${x.items.map(it=>{const ok=it.done;return `<span data-log="${it.id}" data-date="${fd(x.date)}">${ok?'✅':'◻️'} ${label(it)}</span>`;}).join('')}</span></div>`;
   }).join('');
   return `<div style="margin-top:14px"><div class="row between"><b>Programme de la semaine</b><span class="note">suggestion, à adapter</span></div>
     <div class="note">Touchez un aliment pour noter le repas : il se coche ✅. Plusieurs aliments le même jour = de petites quantités de chacun.</div>
@@ -585,7 +482,7 @@ function weekDetail(i, ws, isCurrent){
    <div style="margin-top:16px"><b>Les nouveautés</b></div>
    <ul class="tight">${foods.map(id=>{const s=stat(id);return `<li><b>${esc(fname(id))}</b> <span class="note">— ${esc(FMAP[id].tip)}${s.n?` · <i>${esc(s.label)}</i>`:''}</span></li>`;}).join('')}${p.tips.map(t=>`<li class="note">${esc(t)}</li>`).join('')}</ul>
    ${p.alg?algBlock(p.alg,ws):''}
-   <details style="margin-top:14px;background:#FBFCF3;border:1px solid var(--line);border-radius:12px;padding:10px 12px"><summary style="cursor:pointer"><b>Bon à savoir cette semaine</b> <span class="note">(${p.know.length})</span></summary><ul class="tight">${p.know.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>`;
+   <details class="card soft" style="margin-top:14px;margin-bottom:0;padding:10px 12px"><summary style="cursor:pointer"><b>Bon à savoir cette semaine</b> <span class="note">(${p.know.length})</span></summary><ul class="tight">${p.know.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>`;
 }
 
 
@@ -608,7 +505,7 @@ function todayItemRow(it, date, origin){
     const e=S.entries.filter(x=>x.date===ds && (x.food===it.id || (it.kind==='ent'||it.kind==='alg') && (FMAP[x.food]||{}).alg===(it.g||FMAP[it.id].alg))).pop();
     right=`<span class="note">✅ ${e?esc((AVIS[e.avis]||{e:''}).e)+(e.who?' '+esc(e.who):''):'fait'}</span>`;
   } else {
-    right=`<span class="row" style="gap:4px">${['aime','bof','refuse'].map(a=>`<button class="btn sm sec" style="padding:6px 8px;font-size:17px" data-quick="${it.id}" data-avis="${a}" title="${AVIS[a].n}">${AVIS[a].e}</button>`).join('')}<button class="btn sm ghost" data-log="${it.id}" title="Plus de détails">⋯</button></span>`;
+    right=`<span class="quick">${['aime','bof','refuse'].map(a=>`<button type="button" data-quick="${it.id}" data-avis="${a}" title="${AVIS[a].n}" aria-label="${AVIS[a].n}">${AVIS[a].e}</button>`).join('')}<button type="button" data-log="${it.id}" title="Plus de détails" aria-label="Plus de détails">⋯</button></span>`;
   }
   return `<div class="maint" style="align-items:flex-start"><span style="flex:1"><b>${esc(fname(it.id))}</b> ${pill}${origin?` <span class="note">· prévu ${esc(origin)}</span>`:''}<br><span class="note">${esc(hint)}</span></span>${right}</div>`;
 }
@@ -622,11 +519,11 @@ function todayCard(sch,slot){
   const whoRow=`<div class="row" style="margin-top:10px;gap:6px"><span class="note">Qui note :</span><input type="text" id="whoQuick" value="${esc(who)}" placeholder="ton prénom" style="width:140px;padding:6px 9px;font-size:14px"></div>`;
   if(slot.k===-1){
     const first=weekStatus(0,sch[0].start).find(x=>x.items.length);
-    return html+`<div class="card" style="border-color:#C5CFA0"><div class="kicker">Aujourd'hui</div><h2>On commence ${frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'})}</h2><p class="note" style="margin:6px 0 0">Au programme ce jour-là : ${first.items.map(it=>esc(fname(it.id))).join(', ')}, ${esc(PLAN[0].qte.toLowerCase())}</p>${whoRow}</div>`;
+    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><h2>On commence ${frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'})}</h2><p class="note" style="margin:6px 0 0">Au programme ce jour-là : ${first.items.map(it=>esc(fname(it.id))).join(', ')}, ${esc(PLAN[0].qte.toLowerCase())}</p>${whoRow}</div>`;
   }
   const s=slot.s;
   if(s.after || s.pause){
-    return html+`<div class="card" style="border-color:#C5CFA0"><div class="kicker">Aujourd'hui</div><p style="margin:4px 0">${s.pause?'Semaine de pause : proposez des aliments déjà connus.':'Les 8 semaines sont terminées : on adapte la suite ensemble.'}</p><button class="btn sm sec" data-log="">Noter un repas</button></div>`;
+    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><p style="margin:4px 0">${s.pause?'Semaine de pause : proposez des aliments déjà connus.':'Les 8 semaines sont terminées : on adapte la suite ensemble.'}</p><button class="btn sm sec" data-log="">Noter un repas</button></div>`;
   }
   const dp=weekStatus(s.i,s.start);
   const todayD=dp.find(x=>fd(x.date)===fd(t));
@@ -649,7 +546,7 @@ function todayCard(sch,slot){
     body+=missed.slice(0,4).map(m=>todayItemRow(m.it,t,frd(m.x.date,{weekday:'long'}))).join('');
   }
   const p=PLAN[s.i];
-  return html+`<div class="card" style="border-color:#C5CFA0"><div class="row between"><div><div class="kicker">Aujourd'hui · ${esc(frd(t,{weekday:'long',day:'numeric',month:'long'}))}</div></div><span class="note">Sem. ${s.i+1}</span></div>
+  return html+`<div class="card now"><div class="row between"><div><div class="kicker">Aujourd'hui · ${esc(frd(t,{weekday:'long',day:'numeric',month:'long'}))}</div></div><span class="note">Sem. ${s.i+1}</span></div>
     <div class="note" style="margin:4px 0 6px"><b>Quantité :</b> ${esc(p.qte)}</div>
     ${body}
     <div class="note" style="margin-top:8px">😋 aime · 😐 mitigé · 🙅 refuse — un geste suffit. ⋯ pour ajouter une réaction ou une note.</div>
@@ -725,7 +622,7 @@ function vPlanning(){
         <button class="btn sm ghost" data-mv="${i}" data-dir="1" data-id="${id}" ${i===PLAN.length-1?'disabled style="opacity:.25"':''} title="Reculer d'une semaine">▶</button>
         <button class="btn sm ghost" data-wrm="${i}" data-id="${id}" title="Retirer">✕</button></span></div>`).join('');
     const addSel = `<select data-wadd="${i}" style="margin-top:8px"><option value="">＋ Ajouter un aliment à cette semaine…</option>${Object.entries(CATS).filter(([c])=>c!=='alg').map(([c,cn])=>`<optgroup label="${esc(cn)}">${FOODS.filter(f=>f.c===c&&!f.alg&&!foods.includes(f.id)).map(f=>`<option value="${f.id}">${esc(f.n)}${planned.has(f.id)?' (déjà prévu sem. '+(introWeek(f.id)+1)+')':''}</option>`).join('')}</optgroup>`).join('')}</select>`;
-    html+=`<details class="week" data-w="${i}" ${open?'open':''} style="${isNow?'border-color:#9FBF97':''}"><summary>
+    html+=`<details class="week${isNow?' now':''}" data-w="${i}" ${open?'open':''}><summary>
       <span style="flex:1"><span class="kicker">S${i+1} · ${frd(x.start)} → ${frd(add(x.start,6))}${a?' · '+ageTxt(a):''} · ${esc(p.j)}</span><br>
       <b>${foods.map(fname).map(esc).join(', ')||'<span class="note">aucune nouveauté</span>'}</b>${p.alg?` <span class="pill butter">${esc(ALG[FMAP[p.alg].alg].n)}</span>`:''}${flags.length?` <span class="note">${flags.join(' · ')}</span>`:''}</span>${status}</summary>
       <div class="in">
