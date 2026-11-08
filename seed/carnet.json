@@ -5,10 +5,7 @@
       "annee_vu": 2012,
       "titre": "Après mai",
       "realisateur": "Olivier Assayas",
-      "acteurs": [
-        "Clément Métayer",
-        "Lola Créton"
-      ],
+      "acteurs": ["Clément Métayer", "Lola Créton"],
       "note": 5
     },
     {
@@ -22,818 +19,567 @@
       "annee_vu": 2012,
       "titre": "Amour",
       "realisateur": "Michael Haneke",
-      "acteurs": [
-        "Jean-Louis Trintignant",
-        "Emmanuelle Riva"
-      ],
+      "acteurs": ["Jean-Louis Trintignant", "Emmanuelle Riva"],
       "note": 4
     },
     {
       "annee_vu": 2012,
       "titre": "Argo",
       "realisateur": "Ben Affleck",
-      "acteurs": [
-        "Ben Affleck",
-        "Bryan Cranston",
-        "John Goodman"
-      ],
+      "acteurs": ["Ben Affleck", "Bryan Cranston", "John Goodman"],
       "note": 3
     },
     {
       "annee_vu": 2012,
       "titre": "Cogan : Killing Them Softly",
       "realisateur": "Andrew Dominik",
-      "acteurs": [
-        "Brad Pitt",
-        "Scoot McNairy"
-      ],
+      "acteurs": ["Brad Pitt", "Scoot McNairy"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "The Master",
       "realisateur": "Paul Thomas Anderson",
-      "acteurs": [
-        "Joaquin Phoenix",
-        "Philip Seymour Hoffman"
-      ],
+      "acteurs": ["Joaquin Phoenix", "Philip Seymour Hoffman"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "Jack Reacher",
       "realisateur": "Christopher McQuarrie",
-      "acteurs": [
-        "Tom Cruise",
-        "Rosamund Pike"
-      ],
+      "acteurs": ["Tom Cruise", "Rosamund Pike"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Django Unchained",
       "realisateur": "Quentin Tarantino",
-      "acteurs": [
-        "Jamie Foxx",
-        "Christoph Waltz",
-        "Leonardo DiCaprio"
-      ],
+      "acteurs": ["Jamie Foxx", "Christoph Waltz", "Leonardo DiCaprio"],
       "note": 5
     },
     {
       "annee_vu": 2013,
       "titre": "Zero Dark Thirty",
       "realisateur": "Kathryn Bigelow",
-      "acteurs": [
-        "Jessica Chastain",
-        "Jason Clarke"
-      ],
+      "acteurs": ["Jessica Chastain", "Jason Clarke"],
       "note": 5
     },
     {
       "annee_vu": 2013,
       "titre": "7 Psychopathes (Seven Psychopaths)",
       "realisateur": "Martin McDonagh",
-      "acteurs": [
-        "Colin Farrell",
-        "Woody Harrelson"
-      ],
+      "acteurs": ["Colin Farrell", "Woody Harrelson"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "Gangster Squad",
       "realisateur": "Ruben Fleischer",
-      "acteurs": [
-        "Sean Penn",
-        "Ryan Gosling"
-      ],
+      "acteurs": ["Sean Penn", "Ryan Gosling"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Antiviral",
       "realisateur": "Brandon Cronenberg",
-      "acteurs": [
-        "Caleb Landry Jones",
-        "Sarah Gadon"
-      ],
+      "acteurs": ["Caleb Landry Jones", "Sarah Gadon"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Die Hard : Belle journée pour mourir (A Good Day to Die Hard)",
       "realisateur": "John Moore",
-      "acteurs": [
-        "Bruce Willis",
-        "Jai Courtney"
-      ],
+      "acteurs": ["Bruce Willis", "Jai Courtney"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Spring Breakers",
       "realisateur": "Harmony Korine",
-      "acteurs": [
-        "James Franco",
-        "Selena Gomez"
-      ],
+      "acteurs": ["James Franco", "Selena Gomez"],
       "note": 0
     },
     {
       "annee_vu": 2013,
       "titre": "The Place Beyond the Pines",
       "realisateur": "Derek Cianfrance",
-      "acteurs": [
-        "Ryan Gosling",
-        "Bradley Cooper",
-        "Eva Mendes"
-      ],
+      "acteurs": ["Ryan Gosling", "Bradley Cooper", "Eva Mendes"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Les Amants passagers",
       "realisateur": "Pedro Almodóvar",
-      "acteurs": [
-        "Javier Cámara",
-        "Carlos Areces"
-      ],
+      "acteurs": ["Javier Cámara", "Carlos Areces"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "Effets secondaires (Side Effects)",
       "realisateur": "Steven Soderbergh",
-      "acteurs": [
-        "Jude Law",
-        "Rooney Mara",
-        "Channing Tatum"
-      ],
+      "acteurs": ["Jude Law", "Rooney Mara", "Channing Tatum"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Iron Man 3",
       "realisateur": "Shane Black",
-      "acteurs": [
-        "Robert Downey Jr.",
-        "Gwyneth Paltrow"
-      ],
+      "acteurs": ["Robert Downey Jr.", "Gwyneth Paltrow"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Mud",
       "realisateur": "Jeff Nichols",
-      "acteurs": [
-        "Matthew McConaughey",
-        "Tye Sheridan"
-      ],
+      "acteurs": ["Matthew McConaughey", "Tye Sheridan"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Sous surveillance (The Company You Keep)",
       "realisateur": "Robert Redford",
-      "acteurs": [
-        "Robert Redford",
-        "Shia LaBeouf"
-      ],
+      "acteurs": ["Robert Redford", "Shia LaBeouf"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Le Passé",
       "realisateur": "Asghar Farhadi",
-      "acteurs": [
-        "Bérénice Bejo",
-        "Tahar Rahim",
-        "Ali Mosaffa"
-      ],
+      "acteurs": ["Bérénice Bejo", "Tahar Rahim", "Ali Mosaffa"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Trance",
       "realisateur": "Danny Boyle",
-      "acteurs": [
-        "James McAvoy",
-        "Vincent Cassel"
-      ],
+      "acteurs": ["James McAvoy", "Vincent Cassel"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Only God Forgives",
       "realisateur": "Nicolas Winding Refn",
-      "acteurs": [
-        "Ryan Gosling",
-        "Kristin Scott Thomas"
-      ],
+      "acteurs": ["Ryan Gosling", "Kristin Scott Thomas"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Oh Boy",
       "realisateur": "Jan-Ole Gerster",
-      "acteurs": [
-        "Tom Schilling",
-        "Friederike Kempter"
-      ],
+      "acteurs": ["Tom Schilling", "Friederike Kempter"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "A Very Englishman (The Look of Love)",
       "realisateur": "Michael Winterbottom",
-      "acteurs": [
-        "Steve Coogan",
-        "Anna Friel"
-      ],
+      "acteurs": ["Steve Coogan", "Anna Friel"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Elysium",
       "realisateur": "Neill Blomkamp",
-      "acteurs": [
-        "Matt Damon",
-        "Jodie Foster"
-      ],
+      "acteurs": ["Matt Damon", "Jodie Foster"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Jeune et Jolie",
       "realisateur": "François Ozon",
-      "acteurs": [
-        "Marine Vacth",
-        "Géraldine Pailhas"
-      ],
+      "acteurs": ["Marine Vacth", "Géraldine Pailhas"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Pacific Rim",
       "realisateur": "Guillermo del Toro",
-      "acteurs": [
-        "Charlie Hunnam",
-        "Idris Elba"
-      ],
+      "acteurs": ["Charlie Hunnam", "Idris Elba"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Kick-Ass 2",
       "realisateur": "Jeff Wadlow",
-      "acteurs": [
-        "Aaron Taylor-Johnson",
-        "Chloë Grace Moretz"
-      ],
+      "acteurs": ["Aaron Taylor-Johnson", "Chloë Grace Moretz"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Jimmy P.",
       "realisateur": "Arnaud Desplechin",
-      "acteurs": [
-        "Benicio Del Toro",
-        "Mathieu Amalric"
-      ],
+      "acteurs": ["Benicio Del Toro", "Mathieu Amalric"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Blue Jasmine",
       "realisateur": "Woody Allen",
-      "acteurs": [
-        "Alec Baldwin",
-        "Cate Blanchett"
-      ],
+      "acteurs": ["Alec Baldwin", "Cate Blanchett"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Machete Kills",
       "realisateur": "Robert Rodriguez",
-      "acteurs": [
-        "Danny Trejo",
-        "Michelle Rodriguez"
-      ],
+      "acteurs": ["Danny Trejo", "Michelle Rodriguez"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "La Vie domestique",
       "realisateur": "Isabelle Czajka",
-      "acteurs": [
-        "Emmanuelle Devos",
-        "Julie Ferrier"
-      ],
+      "acteurs": ["Emmanuelle Devos", "Julie Ferrier"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Runner Runner",
       "realisateur": "Brad Furman",
-      "acteurs": [
-        "Justin Timberlake",
-        "Ben Affleck"
-      ],
+      "acteurs": ["Justin Timberlake", "Ben Affleck"],
       "note": 0
     },
     {
       "annee_vu": 2013,
       "titre": "La Vie d'Adèle",
       "realisateur": "Abdellatif Kechiche",
-      "acteurs": [
-        "Adèle Exarchopoulos",
-        "Léa Seydoux"
-      ],
+      "acteurs": ["Adèle Exarchopoulos", "Léa Seydoux"],
       "note": 5
     },
     {
       "annee_vu": 2013,
       "titre": "Prisoners",
       "realisateur": "Denis Villeneuve",
-      "acteurs": [
-        "Hugh Jackman",
-        "Jake Gyllenhaal"
-      ],
+      "acteurs": ["Hugh Jackman", "Jake Gyllenhaal"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Un château en Italie",
       "realisateur": "Valeria Bruni Tedeschi",
-      "acteurs": [
-        "Valeria Bruni Tedeschi",
-        "Louis Garrel"
-      ],
+      "acteurs": ["Valeria Bruni Tedeschi", "Louis Garrel"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "Gravity",
       "realisateur": "Alfonso Cuarón",
-      "acteurs": [
-        "Sandra Bullock",
-        "George Clooney"
-      ],
+      "acteurs": ["Sandra Bullock", "George Clooney"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Snowpiercer",
       "realisateur": "Bong Joon-ho",
-      "acteurs": [
-        "Chris Evans",
-        "Tilda Swinton"
-      ],
+      "acteurs": ["Chris Evans", "Tilda Swinton"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "Inside Llewyn Davis",
       "realisateur": "Joel et Ethan Coen",
-      "acteurs": [
-        "Oscar Isaac",
-        "Carey Mulligan"
-      ],
+      "acteurs": ["Oscar Isaac", "Carey Mulligan"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Inside Out (documentaire sur JR)",
       "realisateur": "Alastair Siddons",
-      "acteurs": [
-        "JR"
-      ],
+      "acteurs": ["JR"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Cartel (The Counselor)",
       "realisateur": "Ridley Scott",
-      "acteurs": [
-        "Michael Fassbender",
-        "Penélope Cruz",
-        "Cameron Diaz"
-      ],
+      "acteurs": ["Michael Fassbender", "Penélope Cruz", "Cameron Diaz"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Les Garçons et Guillaume, à table !",
       "realisateur": "Guillaume Gallienne",
-      "acteurs": [
-        "Guillaume Gallienne"
-      ],
+      "acteurs": ["Guillaume Gallienne"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Casse-tête chinois",
       "realisateur": "Cédric Klapisch",
-      "acteurs": [
-        "Romain Duris",
-        "Kelly Reilly",
-        "Audrey Tautou"
-      ],
+      "acteurs": ["Romain Duris", "Kelly Reilly", "Audrey Tautou"],
       "note": 1
     },
     {
       "annee_vu": 2013,
       "titre": "Le Cinquième Pouvoir",
       "realisateur": "Bill Condon",
-      "acteurs": [
-        "Benedict Cumberbatch",
-        "Daniel Brühl"
-      ],
+      "acteurs": ["Benedict Cumberbatch", "Daniel Brühl"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "A Touch of Sin",
       "realisateur": "Jia Zhangke",
-      "acteurs": [
-        "Wu Jiang",
-        "Wang Baoqiang"
-      ],
+      "acteurs": ["Wu Jiang", "Wang Baoqiang"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Don Jon",
       "realisateur": "Joseph Gordon-Levitt",
-      "acteurs": [
-        "Joseph Gordon-Levitt",
-        "Scarlett Johansson"
-      ],
+      "acteurs": ["Joseph Gordon-Levitt", "Scarlett Johansson"],
       "note": 2
     },
     {
       "annee_vu": 2013,
       "titre": "The Lunchbox",
       "realisateur": "Ritesh Batra",
-      "acteurs": [
-        "Irrfan Khan",
-        "Nimrat Kaur"
-      ],
+      "acteurs": ["Irrfan Khan", "Nimrat Kaur"],
       "note": 3
     },
     {
       "annee_vu": 2013,
       "titre": "Le Loup de Wall Street",
       "realisateur": "Martin Scorsese",
-      "acteurs": [
-        "Leonardo DiCaprio",
-        "Jonah Hill"
-      ],
+      "acteurs": ["Leonardo DiCaprio", "Jonah Hill"],
       "note": 4
     },
     {
       "annee_vu": 2013,
       "titre": "Tel père, tel fils",
       "realisateur": "Hirokazu Kore-eda",
-      "acteurs": [
-        "Masaharu Fukuyama",
-        "Machiko Ono"
-      ],
+      "acteurs": ["Masaharu Fukuyama", "Machiko Ono"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Fruitvale Station",
       "realisateur": "Ryan Coogler",
-      "acteurs": [
-        "Michael B. Jordan",
-        "Melonie Diaz"
-      ],
+      "acteurs": ["Michael B. Jordan", "Melonie Diaz"],
       "note": 1
     },
     {
       "annee_vu": 2014,
       "titre": "Du sang et des larmes (Lone Survivor)",
       "realisateur": "Peter Berg",
-      "acteurs": [
-        "Mark Wahlberg",
-        "Taylor Kitsch"
-      ],
+      "acteurs": ["Mark Wahlberg", "Taylor Kitsch"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "Les Brasiers de la colère (Out of the Furnace)",
       "realisateur": "Scott Cooper",
-      "acteurs": [
-        "Christian Bale",
-        "Woody Harrelson",
-        "Casey Affleck"
-      ],
+      "acteurs": ["Christian Bale", "Woody Harrelson", "Casey Affleck"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "12 Years a Slave",
       "realisateur": "Steve McQueen",
-      "acteurs": [
-        "Chiwetel Ejiofor",
-        "Michael Fassbender"
-      ],
+      "acteurs": ["Chiwetel Ejiofor", "Michael Fassbender"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Dallas Buyers Club",
       "realisateur": "Jean-Marc Vallée",
-      "acteurs": [
-        "Matthew McConaughey",
-        "Jennifer Garner"
-      ],
+      "acteurs": ["Matthew McConaughey", "Jennifer Garner"],
       "note": 5
     },
     {
       "annee_vu": 2014,
       "titre": "American Bluff (American Hustle)",
       "realisateur": "David O. Russell",
-      "acteurs": [
-        "Christian Bale",
-        "Bradley Cooper"
-      ],
+      "acteurs": ["Christian Bale", "Bradley Cooper"],
       "note": 1
     },
     {
       "annee_vu": 2014,
       "titre": "Only Lovers Left Alive",
       "realisateur": "Jim Jarmusch",
-      "acteurs": [
-        "Tilda Swinton",
-        "Tom Hiddleston"
-      ],
+      "acteurs": ["Tilda Swinton", "Tom Hiddleston"],
       "note": 5
     },
     {
       "annee_vu": 2014,
       "titre": "The Grand Budapest Hotel",
       "realisateur": "Wes Anderson",
-      "acteurs": [
-        "Ralph Fiennes",
-        "Tony Revolori",
-        "Jude Law",
-        "Bill Murray"
-      ],
+      "acteurs": ["Ralph Fiennes", "Tony Revolori", "Jude Law", "Bill Murray"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Le Crocodile du Botswanga",
       "realisateur": "Fabrice Éboué",
-      "acteurs": [
-        "Fabrice Éboué",
-        "Thomas Ngijol"
-      ],
+      "acteurs": ["Fabrice Éboué", "Thomas Ngijol"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "The Canyons",
       "realisateur": "Paul Schrader",
-      "acteurs": [
-        "Lindsay Lohan",
-        "James Deen"
-      ],
+      "acteurs": ["Lindsay Lohan", "James Deen"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "Wrong Cops",
       "realisateur": "Quentin Dupieux",
-      "acteurs": [
-        "Mark Burnham",
-        "Éric Judor"
-      ],
+      "acteurs": ["Mark Burnham", "Éric Judor"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Her",
       "realisateur": "Spike Jonze",
-      "acteurs": [
-        "Joaquin Phoenix",
-        "Scarlett Johansson"
-      ],
+      "acteurs": ["Joaquin Phoenix", "Scarlett Johansson"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Captain America : Le Soldat de l'hiver",
       "realisateur": "Anthony et Joe Russo",
-      "acteurs": [
-        "Chris Evans",
-        "Scarlett Johansson"
-      ],
+      "acteurs": ["Chris Evans", "Scarlett Johansson"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "La Crème de la crème",
       "realisateur": "Kim Chapiron",
-      "acteurs": [
-        "Thomas Blumenthal",
-        "Alice Isaaz"
-      ],
+      "acteurs": ["Thomas Blumenthal", "Alice Isaaz"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Nebraska",
       "realisateur": "Alexander Payne",
-      "acteurs": [
-        "Bruce Dern",
-        "Bob Odenkirk"
-      ],
+      "acteurs": ["Bruce Dern", "Bob Odenkirk"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Tom à la ferme",
       "realisateur": "Xavier Dolan",
-      "acteurs": [
-        "Xavier Dolan",
-        "Pierre-Yves Cardinal"
-      ],
+      "acteurs": ["Xavier Dolan", "Pierre-Yves Cardinal"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Night Moves",
       "realisateur": "Kelly Reichardt",
-      "acteurs": [
-        "Jesse Eisenberg",
-        "Peter Sarsgaard"
-      ],
+      "acteurs": ["Jesse Eisenberg", "Peter Sarsgaard"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Joe",
       "realisateur": "David Gordon Green",
-      "acteurs": [
-        "Nicolas Cage",
-        "Tye Sheridan"
-      ],
+      "acteurs": ["Nicolas Cage", "Tye Sheridan"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Maps to the Stars",
       "realisateur": "David Cronenberg",
-      "acteurs": [
-        "Robert Pattinson",
-        "Julianne Moore"
-      ],
+      "acteurs": ["Robert Pattinson", "Julianne Moore"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Black Coal",
       "realisateur": "Diao Yinan",
-      "acteurs": [
-        "Liao Fan",
-        "Gwei Lun-mei"
-      ],
+      "acteurs": ["Liao Fan", "Gwei Lun-mei"],
       "note": 5
     },
     {
       "annee_vu": 2014,
       "titre": "Palo Alto",
       "realisateur": "Gia Coppola",
-      "acteurs": [
-        "James Franco",
-        "Zoe Levin"
-      ],
+      "acteurs": ["James Franco", "Zoe Levin"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Under the Skin",
       "realisateur": "Jonathan Glazer",
-      "acteurs": [
-        "Scarlett Johansson"
-      ],
+      "acteurs": ["Scarlett Johansson"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Ping Pong Summer",
       "realisateur": "Michael Tully",
-      "acteurs": [
-        "Marcello Conte",
-        "Susan Sarandon"
-      ],
+      "acteurs": ["Marcello Conte", "Susan Sarandon"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "Enemy",
       "realisateur": "Denis Villeneuve",
-      "acteurs": [
-        "Jake Gyllenhaal",
-        "Mélanie Laurent"
-      ],
+      "acteurs": ["Jake Gyllenhaal", "Mélanie Laurent"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "A Most Wanted Man",
       "realisateur": "Anton Corbijn",
-      "acteurs": [
-        "Philip Seymour Hoffman",
-        "Rachel McAdams"
-      ],
+      "acteurs": ["Philip Seymour Hoffman", "Rachel McAdams"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Mommy",
       "realisateur": "Xavier Dolan",
-      "acteurs": [
-        "Antoine-Olivier Pilon",
-        "Anne Dorval"
-      ],
+      "acteurs": ["Antoine-Olivier Pilon", "Anne Dorval"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Saint Laurent",
       "realisateur": "Bertrand Bonello",
-      "acteurs": [
-        "Gaspard Ulliel",
-        "Jérémie Renier",
-        "Léa Seydoux"
-      ],
+      "acteurs": ["Gaspard Ulliel", "Jérémie Renier", "Léa Seydoux"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "Ninja Turtles",
       "realisateur": "Jonathan Liebesman",
-      "acteurs": [
-        "Megan Fox",
-        "Will Arnett"
-      ],
+      "acteurs": ["Megan Fox", "Will Arnett"],
       "note": 1
     },
     {
       "annee_vu": 2014,
       "titre": "Gone Girl",
       "realisateur": "David Fincher",
-      "acteurs": [
-        "Ben Affleck",
-        "Rosamund Pike"
-      ],
+      "acteurs": ["Ben Affleck", "Rosamund Pike"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "'71",
       "realisateur": "Yann Demange",
-      "acteurs": [
-        "Jack O'Connell",
-        "Paul Anderson"
-      ],
+      "acteurs": ["Jack O'Connell", "Paul Anderson"],
       "note": 2
     },
     {
       "annee_vu": 2014,
       "titre": "A Girl at My Door",
       "realisateur": "July Jung",
-      "acteurs": [
-        "Doona Bae",
-        "Sae-ron Kim"
-      ],
+      "acteurs": ["Doona Bae", "Sae-ron Kim"],
       "note": 1
     },
     {
       "annee_vu": 2014,
       "titre": "Interstellar",
       "realisateur": "Christopher Nolan",
-      "acteurs": [
-        "Matthew McConaughey",
-        "Anne Hathaway"
-      ],
+      "acteurs": ["Matthew McConaughey", "Anne Hathaway"],
       "note": 3
     },
     {
       "annee_vu": 2014,
       "titre": "Eden",
       "realisateur": "Mia Hansen-Løve",
-      "acteurs": [
-        "Félix de Givry",
-        "Pauline Étienne"
-      ],
+      "acteurs": ["Félix de Givry", "Pauline Étienne"],
       "note": 2,
       "tmdb_id": 283330
     },
@@ -841,42 +587,28 @@
       "annee_vu": 2014,
       "titre": "Quand vient la nuit (The Drop)",
       "realisateur": "Michaël R. Roskam",
-      "acteurs": [
-        "Tom Hardy",
-        "Matthias Schoenaerts",
-        "James Gandolfini"
-      ],
+      "acteurs": ["Tom Hardy", "Matthias Schoenaerts", "James Gandolfini"],
       "note": 4
     },
     {
       "annee_vu": 2014,
       "titre": "Night Call (Nightcrawler)",
       "realisateur": "Dan Gilroy",
-      "acteurs": [
-        "Jake Gyllenhaal",
-        "Rene Russo"
-      ],
+      "acteurs": ["Jake Gyllenhaal", "Rene Russo"],
       "note": 4
     },
     {
       "annee_vu": 2015,
       "titre": "A Most Violent Year",
       "realisateur": "J.C. Chandor",
-      "acteurs": [
-        "Oscar Isaac",
-        "Jessica Chastain"
-      ],
+      "acteurs": ["Oscar Isaac", "Jessica Chastain"],
       "note": null
     },
     {
       "annee_vu": 2015,
       "titre": "The Riot Club",
       "realisateur": "Lone Scherfig",
-      "acteurs": [
-        "Max Irons",
-        "Douglas Booth",
-        "Holliday Grainger"
-      ],
+      "acteurs": ["Max Irons", "Douglas Booth", "Holliday Grainger"],
       "note": null
     }
   ]
