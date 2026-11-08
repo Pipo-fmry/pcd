@@ -8,6 +8,8 @@ Site perso à deux (🐊 Croco et 🐬 Dauphin), trois espaces :
 
 Hébergé sur Cloudflare Workers (site statique + API) avec une base D1 (SQLite). Offre gratuite, largement suffisante pour deux.
 
+**En ligne : https://pcd.pipo-fmry.workers.dev** (code d'accès partagé, secret `PCD_PIN`).
+
 ## Lancer en local
 
 Prérequis : Node ≥ 20, pnpm.
@@ -35,7 +37,7 @@ En local : dans `.dev.vars`. En prod : `pnpm wrangler secret put PCD_PIN` (puis 
 
 ## Importer le carnet de films
 
-`seed/carnet.json` contient les 91 films du carnet manuscrit (notes de Croco, 2012–2015). Pour les enrichir via TMDB et les charger :
+`seed/carnet.json` contient les 87 films du carnet manuscrit (notes de Croco, 2012–2015). Un champ `tmdb_id` optionnel force la correspondance quand la recherche TMDB se trompe (homonymes). Pour les enrichir via TMDB et les charger :
 
 ```bash
 TMDB_API_KEY=… OMDB_API_KEY=… pnpm seed:build   # écrit seed/carnet.sql
@@ -59,7 +61,7 @@ pnpm wrangler secret put OMDB_API_KEY
 pnpm run deploy
 ```
 
-Ensuite, à chaque changement : `pnpm run deploy`. L'URL est de la forme `https://pcd.<compte>.workers.dev` (affichée à la fin du déploiement).
+Ensuite, à chaque changement : `pnpm run deploy`. L'URL est de la forme `https://pcd.<sous-domaine>.workers.dev` (affichée à la fin du déploiement ; le sous-domaine workers.dev du compte se choisit au premier déploiement).
 
 Nouvelle migration : ajouter un fichier `migrations/000N_nom.sql`, puis `pnpm db:migrate:local` et `pnpm db:migrate`.
 

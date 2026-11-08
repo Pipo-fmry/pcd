@@ -43,8 +43,10 @@ for (const f of films) {
   // « Titre FR (Titre original) » : on cherche d'abord l'original, plus fiable chez TMDB.
   const m = f.titre.match(/^(.*?)\s*\((.+)\)$/);
   const requetes = m ? [m[2], m[1]] : [f.titre];
-  let hit = null;
+  // `tmdb_id` dans le carnet force la correspondance quand la recherche se trompe (homonymes).
+  let hit = f.tmdb_id ? { id: f.tmdb_id } : null;
   for (const r of requetes) {
+    if (hit) break;
     for (const year of [f.annee_vu, f.annee_vu - 1, '']) {
       const d = await tmdb('/search/movie', { query: r, year });
       hit = d.results?.[0];
