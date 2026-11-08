@@ -970,3 +970,13 @@ details.week > summary:active {
     }
   }
 }
+.modal {
+  overflow-x: hidden;
+}
+.modal > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.sheet-head {
+  touch-action: pan-y;
+}

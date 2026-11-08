@@ -690,3 +690,61 @@ a {
       background 0.15s;
   }
 }
+
+/* Feuilles : fermeture iOS, aucun débordement latéral, page bloquée derrière */
+body.noscroll {
+  overflow: hidden;
+}
+.sheet .panel {
+  overflow-x: hidden;
+}
+.sheet .panel > *,
+.detail-head > div {
+  min-width: 0;
+  max-width: 100%;
+}
+.iconbtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 15px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.sheet-head {
+  position: sticky;
+  top: -12px;
+  z-index: 2;
+  margin: -12px -20px 0;
+  padding: 10px 20px 6px;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  touch-action: pan-y;
+}
+.sheet-head .grab {
+  margin: 0;
+}
+.sheet-head .iconbtn {
+  position: absolute;
+  right: 16px;
+  top: 8px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheet .panel {
+    animation: monte 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+  }
+  @keyframes monte {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+}

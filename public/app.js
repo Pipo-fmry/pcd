@@ -314,7 +314,7 @@ function ouvrirFilm(id) {
   const panel = $('#film-panel');
   const meta = [f.annee, f.realisateur, f.duree ? `${f.duree} min` : null].filter(Boolean).join(' · ');
   panel.innerHTML = `
-    <div class="grab"></div>
+    <div class="sheet-head"><div class="grab"></div><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
     <div class="detail-head">
       ${posterHtml(f)}
       <div>
@@ -340,7 +340,6 @@ function ouvrirFilm(id) {
     <div class="actions">
       ${!f.affiche_url || !f.trailer_youtube ? `<button class="btn" id="d-refresh" type="button">↻ Compléter depuis TMDB</button>` : ''}
       <button class="btn danger" id="d-delete" type="button">Supprimer</button>
-      <button class="btn" type="button" data-close>Fermer</button>
     </div>`;
   const notes = { croco: f.note_croco, dauphin: f.note_dauphin };
   let statut = f.statut;
@@ -402,14 +401,14 @@ function ouvrirFilm(id) {
     b.dataset.confirm = '1';
     b.textContent = 'Confirmer la suppression';
   };
-  $('#sheet-film').hidden = false;
+  ouvrir('#sheet-film');
 }
 
 /* ---------- Ajout ---------- */
 let timerRecherche;
 $('#fab').onclick = () => {
   reinitAjout();
-  $('#sheet-add').hidden = false;
+  ouvrir('#sheet-add');
   setTimeout(() => $('#f-q').focus(), 50);
 };
 function reinitAjout() {
@@ -529,14 +528,43 @@ $('#f-save').onclick = async () => {
 };
 
 /* ---------- Feuilles, toast ---------- */
+// Une feuille se ferme comme sur iOS : croix, tap sur le voile, glissement vers le bas depuis la poignée, Escape.
+function ouvrir(sel) {
+  const s = $(sel);
+  s.hidden = false;
+  s.querySelector('.panel').scrollTop = 0;
+  document.body.classList.add('noscroll');
+}
 function fermer() {
   $$('.sheet').forEach((s) => (s.hidden = true));
+  document.body.classList.remove('noscroll');
 }
-$$('.sheet').forEach((s) =>
+$$('.sheet').forEach((s) => {
   s.addEventListener('click', (e) => {
     if (e.target === s || e.target.closest('[data-close]')) fermer();
-  }),
-);
+  });
+  let y0 = null;
+  s.addEventListener(
+    'touchstart',
+    (e) => {
+      y0 = e.target.closest('.sheet-head') ? e.touches[0].clientY : null;
+    },
+    { passive: true },
+  );
+  s.addEventListener(
+    'touchmove',
+    (e) => {
+      if (y0 != null && e.touches[0].clientY - y0 > 60) {
+        y0 = null;
+        fermer();
+      }
+    },
+    { passive: true },
+  );
+});
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') fermer();
+});
 let timerToast;
 function toast(msg) {
   const t = $('#toast');

@@ -79,7 +79,7 @@
 <!-- Feuille : ajouter un film -->
 <div class="sheet" id="sheet-add" hidden>
   <div class="panel">
-    <div class="grab"></div>
+    <div class="sheet-head"><div class="grab"></div><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
     <h2>Ajouter un film</h2>
     <div class="field"><label for="f-q">Titre</label><input id="f-q" type="search" placeholder="Chercher un film…" autocomplete="off"></div>
     <div id="f-results" class="results"></div>
@@ -96,7 +96,6 @@
     </div>
     <div class="err" id="f-err" hidden></div>
     <button class="btn primary big" id="f-save" type="button" disabled>Enregistrer</button>
-    <button class="btn" type="button" data-close>Annuler</button>
   </div>
 </div>
 

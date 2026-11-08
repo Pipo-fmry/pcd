@@ -664,6 +664,7 @@ const mbg=document.getElementById('mbg'), modal=document.getElementById('modal')
 function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; document.body.classList.remove('noscroll'); }
 function showModal(){ mbg.classList.add('show'); modal.scrollTop=0; document.body.classList.add('noscroll'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mbg.classList.contains('show')) closeModal(); });
+(function(){ let y0=null; mbg.addEventListener('touchstart',e=>{ y0=e.target.closest('.sheet-head')?e.touches[0].clientY:null; },{passive:true}); mbg.addEventListener('touchmove',e=>{ if(y0!=null && e.touches[0].clientY-y0>60){ y0=null; closeModal(); } },{passive:true}); })();
 mbg.addEventListener('click',e=>{ if(e.target===mbg) closeModal(); });
 
 let F={};
