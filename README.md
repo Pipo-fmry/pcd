@@ -78,4 +78,4 @@ scripts/import-carnet.mjs
 
 ## Comment marchent les recommandations
 
-Pour une personne, ses films notés 4 ou 5 servent de graines. TMDB donne les films proches de chaque graine ; un candidat marque d'autant plus qu'il revient souvent, que la graine était bien notée et que ses genres ressemblent à ceux que la personne aime. On retire les films déjà vus, à voir ou refusés (« Pas pour moi »). « Pour nous » croise les deux listes. Les appels TMDB sont mis en cache 7 jours dans D1.
+Pour une personne, ses films notés 4 ou 5 servent de graines. TMDB donne les films proches de chaque graine ; un candidat marque d'autant plus qu'il revient souvent, que la graine était bien notée et que ses genres ressemblent à ceux que la personne aime. On retire les films déjà vus, à voir ou refusés (« Pas pour moi »). L'onglet « Recos » sur « Tous » croise les deux listes. Les appels TMDB sont mis en cache 7 jours dans D1.

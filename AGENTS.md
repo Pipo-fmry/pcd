@@ -57,7 +57,7 @@ Voir [README.md](README.md) : `pnpm dev` (http://localhost:5793), `pnpm db:migra
 - **`ui-ux-pro-max`** ou **`design-taste-frontend`** : pour auditer un écran existant (lisibilité, contraste, cibles tactiles,
   cohérence des composants) et proposer des corrections concrètes, pas une refonte.
 - **`design:accessibility-review`** : avant une PR qui touche formulaires, feuilles (sheets) ou navigation.
-- Écrire les libellés comme on parle : « Vu », « À voir », « Pour nous », « Pas pour moi ». Pas de jargon technique à l'écran.
+- Écrire les libellés comme on parle : « Vus », « À voir », « Recos », « Pas pour moi ». Pas de jargon technique à l'écran.
 
 ## Mémoire du projet
 
