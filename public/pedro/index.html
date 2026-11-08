@@ -77,7 +77,7 @@ const FOODS = [
  // féculents
  {id:'semoule',n:'Semoule de blé',c:'fec',alg:'ble',s:[],tip:'Semoule fine cuite dans l\'eau des légumes.'},
  {id:'riz',n:'Riz',c:'fec',s:[],tip:'Bien cuit, mixé avec les légumes.'},
- {id:'avoine',n:'Flocons d\'avoine',c:'fec',s:[],tip:'Contiennent du gluten. Cuits dans de l\'eau ou du lait de bébé.'},
+ {id:'avoine',n:'Flocons d\'avoine',c:'fec',s:[],tip:'Contiennent du gluten. Cuits dans de l\'eau ou de son lait.'},
  {id:'quinoa',n:'Quinoa',c:'fec',s:[],tip:'Bien rincé et cuit.'},
  {id:'lentilles',n:'Lentilles corail',c:'fec',s:[],tip:'Très cuites, mixées. 1 c. à café au début.'},
  {id:'poischiche',n:'Pois chiche',c:'fec',s:[],tip:'Mixé très finement, sans peau.'},
@@ -182,9 +182,9 @@ const PLAN = [
 
 
 // repères par semaine (ex-onglet Repères)
-PLAN[0].j="4 j/7"; PLAN[0].know=["Bébé est prêt s'il tient sa tête, s'intéresse à vos assiettes et ne repousse plus la cuillère avec la langue.", "Sans pression : il ouvre la bouche = il veut ; il détourne la tête = il a fini. Le lait reste l'essentiel (500 à 750 ml/jour).", "Avant 1 an, jamais : miel, sel ou sucre ajoutés, lait de vache en boisson, boissons végétales à la place du lait."];
+PLAN[0].j="4 j/7"; PLAN[0].know=["Pedro est prêt s'il tient sa tête, s'intéresse à vos assiettes et ne repousse plus la cuillère avec la langue.", "Sans pression : il ouvre la bouche = il veut ; il détourne la tête = il a fini. Le lait reste l'essentiel (500 à 750 ml/jour).", "Avant 1 an, jamais : miel, sel ou sucre ajoutés, lait de vache en boisson, boissons végétales à la place du lait."];
 PLAN[1].j="4 j/7"; PLAN[1].know=["Refus ? Normal. On repropose 2-3 jours plus tard, en changeant la présentation, jusqu'à 10 fois.", "Mangez du même légume devant lui : c'est le levier le plus efficace pour qu'il l'accepte."];
-PLAN[2].j="5 j/7"; PLAN[2].know=["Premier allergène : posez la question au pédiatre si ce n'est pas fait : « Mon bébé est-il à risque d'allergie (eczéma, allergie connue) ? »", "Rougeur autour de la bouche = souvent bénin. Plaques, gonflement du visage, vomissements répétés = on arrête et on appelle le médecin.", "Gêne pour respirer, malaise, pâleur, somnolence inhabituelle = appelez le 15."];
+PLAN[2].j="5 j/7"; PLAN[2].know=["Premier allergène : posez la question au pédiatre si ce n'est pas fait : « Mon enfant est-il à risque d'allergie (eczéma, allergie connue) ? »", "Rougeur autour de la bouche = souvent bénin. Plaques, gonflement du visage, vomissements répétés = on arrête et on appelle le médecin.", "Gêne pour respirer, malaise, pâleur, somnolence inhabituelle = appelez le 15."];
 PLAN[3].j="5 j/7"; PLAN[3].know=["Gluten : petites quantités les premières semaines.", "Un allergène toléré revient ensuite régulièrement : c'est ce que font les lignes « entretien » du programme."];
 PLAN[4].j="7 j/7"; PLAN[4].know=["Les fruits arrivent après 4 semaines de légumes : ils ne remplacent pas les légumes.", "Œuf toujours bien cuit (jamais à la coque ni mollet avant 1 an)."];
 PLAN[5].j="7 j/7"; PLAN[5].know=["Arachide et fruits à coque : jamais entiers ni en morceaux avant 4 ans, seulement en purée ou poudre.", "Viande, poisson, œuf : 5 g max par jour avant 6 mois, toujours bien cuits."];
@@ -218,7 +218,7 @@ const inSeason = (f,d)=>!f.s.length || f.s.includes(monthOf(d));
 const fname = id => FMAP[id]?FMAP[id].n:id;
 
 /* ================= ÉTAT & STOCKAGE ================= */
-const DEF = {name:'',birth:'2026-07-05',start:'2026-11-09',pauses:[],extra:{},removed:{},pedia:false,ready:{}};
+const DEF = {name:'Pedro',birth:'2026-07-05',start:'2026-11-09',pauses:[],extra:{},removed:{},pedia:false,ready:{}};
 const S = {entries:[],settings:{...DEF},mode:'loading'};
 let DB=null;
 const LS = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
@@ -336,7 +336,7 @@ function render(){
   if(!['aujourdhui','planning','aliments'].includes(TAB)) TAB='aujourdhui';
   document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===TAB));
   const a=ageAt(today());
-  const nm=S.settings.name?esc(S.settings.name):'bébé';
+  const nm=esc(S.settings.name||'Pedro');
   document.getElementById('title').textContent = S.settings.name? `Diversification de ${S.settings.name}` : 'Diversification';
   const st=pd(S.settings.start); const t=today();
   let extra='';
@@ -368,7 +368,7 @@ function algBlock(protoKey, weekStart){
     <div class="row" style="margin-top:8px"><div class="steps">${dots}</div><span class="note">${gs.ok>=3?'Toléré ✓':gs.ok+'/3 prises'}</span></div>
     <details style="margin-top:6px"><summary class="note" style="cursor:pointer">Préparation et suite</summary>
     <div class="note" style="margin-top:4px">${esc(p.how)}</div>
-    <div class="note" style="margin-top:4px">Les 3 prises sont dans le programme : le matin ou le midi, à la maison, bébé en forme. Observez-le 2 h. Toléré après 3 prises sans réaction.</div>
+    <div class="note" style="margin-top:4px">Les 3 prises sont dans le programme : le matin ou le midi, à la maison, Pedro en forme. Observez-le 2 h. Toléré après 3 prises sans réaction.</div>
     <div class="note" style="margin-top:4px"><b>Ensuite</b> : ${esc(p.keep)}</div></details>
     ${gap}${rx}
   </div>`;
@@ -514,7 +514,7 @@ function todayCard(sch,slot){
   let html='';
   const obs=observing();
   obs.forEach(o=>{ const h=new Date(o.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-    html+=`<div class="warn" style="margin-bottom:10px"><b>👀 ${esc(fname(o.e.food))} : observez bébé jusqu'à ${h}.</b><br>Plaques, gonflement des lèvres ou du visage, vomissements répétés → on arrête et on appelle le médecin. Gêne pour respirer, malaise, pâleur → 15.</div>`; });
+    html+=`<div class="warn" style="margin-bottom:10px"><b>👀 ${esc(fname(o.e.food))} : observez Pedro jusqu'à ${h}.</b><br>Plaques, gonflement des lèvres ou du visage, vomissements répétés → on arrête et on appelle le médecin. Gêne pour respirer, malaise, pâleur → 15.</div>`; });
   const who=LS.get('div_who','');
   const whoRow=`<div class="row" style="margin-top:10px;gap:6px"><span class="note">Qui note :</span><input type="text" id="whoQuick" value="${esc(who)}" placeholder="ton prénom" style="width:140px;padding:6px 9px;font-size:14px"></div>`;
   if(slot.k===-1){
@@ -664,7 +664,9 @@ function vFoods(){
 
 /* ================= MODALES ================= */
 const mbg=document.getElementById('mbg'), modal=document.getElementById('modal');
-function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; }
+function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; document.body.classList.remove('noscroll'); }
+function showModal(){ mbg.classList.add('show'); modal.scrollTop=0; document.body.classList.add('noscroll'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mbg.classList.contains('show')) closeModal(); });
 mbg.addEventListener('click',e=>{ if(e.target===mbg) closeModal(); });
 
 let F={};
@@ -678,7 +680,7 @@ function openLog(preset, date){
   if(preset) suggested.add(preset);
   F.suggested=[...suggested];
   drawLog();
-  mbg.classList.add('show');
+  showModal();
 }
 function chips(group,obj,cur,cls){ return Object.entries(obj).map(([k,v])=>`<button type="button" class="chip ${cur===k?'on '+(typeof v==='object'?v.cls:cls||''):''}" data-set="${group}" data-v="${k}">${esc(typeof v==='object'?(v.e?v.e+' '+v.n:v.n):v)}</button>`).join(''); }
 function drawLog(){
@@ -686,13 +688,13 @@ function drawLog(){
   const sel=[...F.foods];
   const hasAlgNew = sel.some(id=>{const f=FMAP[id]; return f&&f.alg&&groupStat(f.alg).n===0;});
   modal.innerHTML=`
-   <div class="row between"><h2>Noter un repas</h2><button class="btn ghost" data-close>✕</button></div>
+   <div class="sheet-head"><h2>Noter un repas</h2><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
    <div class="fld"><span class="lab">Aliment(s) proposé(s)</span>
      <div class="foodpick">${sug.map(id=>`<button type="button" class="chip ${F.foods.has(id)?'on g':''}" data-food="${id}">${esc(fname(id))}</button>`).join('')}</div>
      <select id="addfood" style="margin-top:8px"><option value="">+ Un autre aliment de la liste…</option>${Object.entries(CATS).map(([c,cn])=>`<optgroup label="${esc(cn)}">${rest.filter(f=>f.c===c).map(f=>`<option value="${f.id}">${esc(f.n)}</option>`).join('')}</optgroup>`).join('')}</select>
      <input type="text" id="other" placeholder="…ou un aliment hors liste (ex. : topinambour)" style="margin-top:8px" value="${esc(F.other)}">
    </div>
-   ${hasAlgNew?`<div class="info" style="margin-top:10px">Nouvel allergène : de préférence le matin ou le midi, à la maison, et observez bébé pendant 2 heures.</div>`:''}
+   ${hasAlgNew?`<div class="info" style="margin-top:10px">Nouvel allergène : de préférence le matin ou le midi, à la maison, et observez Pedro pendant 2 heures.</div>`:''}
    <div class="fld"><label for="date">Date</label><input type="date" id="date" value="${F.date}"></div>
    <div class="fld"><span class="lab">Son avis</span><div class="filter">${chips('avis',AVIS,F.avis)}</div></div>
    <div class="fld"><span class="lab">Ses signaux</span><div class="filter">${chips('signal',SIGNAUX,F.signal)}</div></div>
@@ -705,7 +707,7 @@ function drawLog(){
    </div>
    <div class="fld"><label for="note">Note</label><textarea id="note" placeholder="Préparation, mélange, contexte…">${esc(F.note)}</textarea></div>
    <div class="fld"><label for="who">Qui l'a donné ?</label><input type="text" id="who" placeholder="Ton prénom" value="${esc(F.who)}"></div>
-   <div class="row" style="margin-top:18px;justify-content:flex-end"><button class="btn sec" data-close>Annuler</button><button class="btn" id="saveLog">Enregistrer</button></div>`;
+   <div class="sheet-foot"><button type="button" class="btn big" id="saveLog">Enregistrer</button></div>`;
 }
 function captureLog(){
   const g=id=>document.getElementById(id);
@@ -727,13 +729,13 @@ async function saveLog(){
 
 function openSettings(){
   const s=S.settings;
-  modal.innerHTML=`<div class="row between"><h2>Réglages</h2><button class="btn ghost" data-close>✕</button></div>
-   <div class="fld"><label for="sName">Prénom de bébé</label><input type="text" id="sName" value="${esc(s.name)}" placeholder="Prénom"></div>
+  modal.innerHTML=`<div class="sheet-head"><h2>Réglages</h2><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
+   <div class="fld"><label for="sName">Prénom</label><input type="text" id="sName" value="${esc(s.name)}" placeholder="Prénom"></div>
    <div class="fld"><label for="sBirth">Date de naissance</label><input type="date" id="sBirth" value="${esc(s.birth)}"></div>
    <div class="fld"><label for="sStart">Début de la diversification (un lundi idéalement)</label><input type="date" id="sStart" value="${esc(s.start)}"></div>
    <p class="note">Le planning se recalcule à partir de cette date. ${S.mode==='db'?'Les réglages et le journal sont partagés avec les personnes qui ont accès à cette page.':'Les données sont enregistrées sur cet appareil.'}</p>
-   <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn sec" data-close>Annuler</button><button class="btn" id="saveSet">Enregistrer</button></div>`;
-  mbg.classList.add('show');
+   <div class="sheet-foot"><button type="button" class="btn big" id="saveSet">Enregistrer</button></div>`;
+  showModal();
 }
 function weekRemove(i,id){ OPENW.add(i); editFoods(st=>setWeekFood(st,i,id,false)); }
 function weekAdd(i,id){ if(!id) return; OPENW.add(i); editFoods(st=>{ const w=introWeek(id); if(w>-1 && w!==i) setWeekFood(st,w,id,false); setWeekFood(st,i,id,true); }); }

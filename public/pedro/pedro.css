@@ -840,3 +840,133 @@ table.q th {
       background 0.15s;
   }
 }
+
+/* Finitions iOS */
+html {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+body.noscroll {
+  overflow: hidden;
+}
+.sheet-head {
+  position: sticky;
+  top: -10px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: -10px -20px 0;
+  padding: 14px 20px 10px;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.sheet-head .iconbtn {
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
+  background: var(--bg);
+  border-color: transparent;
+}
+.sheet-foot {
+  position: sticky;
+  bottom: calc(-24px - env(safe-area-inset-bottom, 0px));
+  z-index: 2;
+  margin: 18px -20px calc(-24px - env(safe-area-inset-bottom, 0px));
+  padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+}
+.sheet-foot .btn {
+  width: 100%;
+}
+.btn.big {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 14px;
+}
+.modal {
+  scrollbar-width: none;
+}
+.modal::-webkit-scrollbar {
+  display: none;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236b6f5e' stroke-width='1.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 11px;
+  padding-right: 32px;
+}
+.check {
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 0;
+}
+.check input {
+  appearance: none;
+  -webkit-appearance: none;
+  order: 2;
+  flex: none;
+  width: 46px;
+  height: 28px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--line);
+  position: relative;
+  cursor: pointer;
+}
+.check input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.check input:checked {
+  background: var(--accent);
+}
+.check input:checked::after {
+  left: 20px;
+}
+.btn:active,
+.chip:active,
+.food:active,
+.quick button:active,
+.iconbtn:active,
+details.week > summary:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .iconbtn,
+  .check input,
+  .check input::after,
+  details.week > summary {
+    transition:
+      transform 0.12s,
+      background 0.18s,
+      left 0.18s;
+  }
+  .modal-bg.show .modal {
+    animation: monte 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+  }
+  .modal-bg.show {
+    animation: voile 0.25s ease-out;
+  }
+  @keyframes voile {
+    from {
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+}
