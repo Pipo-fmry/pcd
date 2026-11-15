@@ -66,6 +66,7 @@ const FOODS = [
  {id:'betterave',n:'Betterave',c:'leg',s:[9,10,11,12,1,2,3],tip:'Cuite. Colore les couches, c\'est normal !'},
  {id:'endive',n:'Endive (cuite)',c:'leg',s:[10,11,12,1,2,3],tip:'Amère : bon entraînement du goût.'},
  {id:'haricotvert',n:'Haricot vert (surgelé)',c:'leg',s:[],tip:'Surgelé nature : bonne option hors saison.'},
+ {id:'petitspois',n:'Petits pois',c:'leg',s:[5,6,7],tip:'Extra-fins (surgelés hors saison) : bien cuits, mixés puis passés au tamis pour la peau.'},
  {id:'avocat',n:'Avocat',c:'leg',s:[11,12,1,2,3,4,5],tip:'Bien mûr, écrasé, cru.'},
  // fruits
  {id:'pomme',n:'Pomme (cuite)',c:'fru',s:[9,10,11,12,1,2,3,4],tip:'Compote maison sans sucre. Jamais crue dure en morceaux.'},
@@ -107,8 +108,22 @@ const FOODS = [
  {id:'colza',n:'Huile de colza',c:'gra',s:[],tip:'1 c. à café rase dans la purée (oméga-3).'},
  {id:'olive',n:'Huile d\'olive',c:'gra',s:[],tip:'1 c. à café rase dans la purée.'},
 ];
-const CATS = {leg:'Légumes',fru:'Fruits',fec:'Féculents & légumineuses',pro:'Viande, poisson, œuf',lai:'Produits laitiers',alg:'Arachide, fruits à coque & co',gra:'Matières grasses'};
+const CATS = {leg:'Légumes',fru:'Fruits',fec:'Féculents & légumineuses',pro:'Viande, poisson, œuf',lai:'Produits laitiers',alg:'Arachide, fruits à coque & co',gra:'Matières grasses',aut:'Ajoutés par vous'};
 const FMAP = Object.fromEntries(FOODS.map(f=>[f.id,f]));
+// Aliments hors liste ajoutés depuis « Noter un repas » : pas de liste à part, ils se déduisent du journal
+// (food = 'autre:<nom>', cat = catégorie choisie ; les anciennes entrées sans cat vont dans « Ajoutés par vous »).
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+function customFood(id,n,c){
+  if(FMAP[id]) return FMAP[id];
+  const f={id,n,c:CATS[c]&&c!=='alg'?c:'aut',s:[],tip:'Ajouté par vous.',custom:true};
+  FOODS.push(f); FMAP[id]=f; return f;
+}
+function addCustom(name,c){
+  const n=String(name||'').trim().slice(0,60); if(!n) return null;
+  const hit=FOODS.find(f=>norm(f.n)===norm(n) || norm(f.n.replace(/\s*\(.*\)/,''))===norm(n));
+  return hit ? hit.id : customFood('autre:'+n.toLowerCase(),n,c).id;
+}
+const syncCustom = () => S.entries.forEach(e=>{ if(String(e.food).startsWith('autre:')) customFood(e.food,e.foodName||e.food.slice(6),e.cat); });
 
 // groupes allergènes : tier 1 = prioritaires (2-3×/sem), tier 2 = 1×/sem minimum
 const ALG = {
@@ -319,7 +334,7 @@ function stat(id){
   else if(f.alg && ok>=3){ st='done'; label='Toléré ✓ ('+ok+' prises)'; cls='done'; }
   else if(!f.alg && aime>=2){ st='done'; label='Acquis ✓'; cls='done'; }
   else if(n && lastRef && (!lastAime || lastRef.date>=lastAime.date) && refus>=1 && aime===0){ st='ref'; label='Refusé '+refus+'/10 · on repropose'; cls='ref'; }
-  else if(n){ st='disc'; label= f.alg? 'En introduction ('+ok+'/3)' : 'En découverte ('+n+' fois)'; }
+  else if(n){ st='disc'; cls='disc'; label= f.alg? 'En introduction ('+ok+'/3)' : 'En découverte ('+n+' fois)'; }
   return {n,aime,refus,ok,last,first,st,label,cls,lastRef};
 }
 function groupStat(g){
@@ -334,6 +349,7 @@ function groupStat(g){
 let TAB = (location.hash||'#aujourdhui').slice(1);
 function render(){
   if(!['aujourdhui','planning','aliments'].includes(TAB)) TAB='aujourdhui';
+  syncCustom();
   document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===TAB));
   const a=ageAt(today());
   const nm=esc(S.settings.name||'Pedro');
@@ -644,18 +660,26 @@ function refus(){
 let FF='tous';
 function vFoods(){
   const t=today();
-  const filters={tous:'Tous',todo:'À tester',alg:'Allergènes'};
-  let html=`<div class="filter">${Object.entries(filters).map(([k,v])=>`<button class="chip ${FF===k?'on':''}" data-ff="${k}">${v}</button>`).join('')}</div>`;
-  const tested=FOODS.filter(f=>stat(f.id).n).length;
-  html+=`<div class="note" style="margin-bottom:10px">${tested} goûtés sur ${FOODS.length}</div>`;
+  // trois états lisibles : à tester (jamais goûté), en cours (goûté, pas encore acquis / toléré), acquis
+  const etat=s=>s.st==='done'?'done':s.n?'cours':'todo';
+  const ST=Object.fromEntries(FOODS.map(f=>[f.id,stat(f.id)]));
+  const nb={todo:0,cours:0,done:0}; FOODS.forEach(f=>nb[etat(ST[f.id])]++);
+  const pct=k=>(100*nb[k]/FOODS.length).toFixed(1)+'%';
+  const algs=Object.keys(ALG).map(groupStat); const algOk=algs.filter(g=>g.ok>=3).length, algCours=algs.filter(g=>g.n&&g.ok<3).length;
+  let html=`<div class="card soft synth">
+    <div class="jauge" role="img" aria-label="${nb.done} acquis, ${nb.cours} en cours, ${nb.todo} à tester"><span class="done" style="width:${pct('done')}"></span><span class="cours" style="width:${pct('cours')}"></span></div>
+    <div class="legend"><span><i class="done"></i><b>${nb.done}</b> acquis</span><span><i class="cours"></i><b>${nb.cours}</b> en cours</span><span><i></i><b>${nb.todo}</b> à tester</span></div>
+    <div class="note">Allergènes : ${algOk} toléré${algOk>1?'s':''}, ${algCours} en introduction, sur ${algs.length}</div>
+  </div>`;
+  const filters={tous:['Tous',FOODS.length],todo:['À tester',nb.todo],cours:['En cours',nb.cours],done:['Acquis',nb.done],alg:['Allergènes',FOODS.filter(f=>f.alg).length]};
+  html+=`<div class="filter">${Object.entries(filters).map(([k,[v,n]])=>`<button class="chip ${FF===k?'on':''}" data-ff="${k}">${v} <span class="n">${n}</span></button>`).join('')}</div>`;
   Object.entries(CATS).forEach(([c,cn])=>{
-    const list=FOODS.filter(f=>f.c===c).filter(f=>{const s=stat(f.id);
-      if(FF==='goute') return s.n>0; if(FF==='todo') return !s.n; if(FF==='ref') return s.st==='ref'; if(FF==='alg') return !!f.alg; return true;});
+    const all=FOODS.filter(f=>f.c===c);
+    const list=all.filter(f=>FF==='tous'||(FF==='alg'?!!f.alg:etat(ST[f.id])===FF));
     if(!list.length) return;
-    html+=`<h3 style="margin:14px 0 2px">${esc(cn)}</h3><div class="foods">${list.map(f=>foodCard(f.id,{date:t})).join('')}</div>`;
+    const gout=all.filter(f=>ST[f.id].n).length;
+    html+=`<h3 style="margin:14px 0 2px">${esc(cn)} <span class="note">${gout}/${all.length} goûtés</span></h3><div class="foods">${list.map(f=>foodCard(f.id,{date:t})).join('')}</div>`;
   });
-  const others=[...new Set(S.entries.filter(e=>!FMAP[e.food]).map(e=>e.foodName||e.food))];
-  if(others.length && FF!=='alg') html+=`<h3 style="margin:14px 0 2px">Autres aliments notés</h3><div class="note">${others.map(esc).join(', ')}</div>`;
   return html;
 }
 
@@ -664,6 +688,7 @@ const mbg=document.getElementById('mbg'), modal=document.getElementById('modal')
 function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; document.body.classList.remove('noscroll'); }
 function showModal(){ mbg.classList.add('show'); modal.scrollTop=0; document.body.classList.add('noscroll'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mbg.classList.contains('show')) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.id==='other'){ e.preventDefault(); captureLog(); pickOther(); drawLog(); } });
 (function(){ let y0=null; mbg.addEventListener('touchstart',e=>{ y0=e.target.closest('.sheet-head')?e.touches[0].clientY:null; },{passive:true}); mbg.addEventListener('touchmove',e=>{ if(y0!=null && e.touches[0].clientY-y0>60){ y0=null; closeModal(); } },{passive:true}); })();
 mbg.addEventListener('click',e=>{ if(e.target===mbg) closeModal(); });
 
@@ -674,7 +699,7 @@ function openLog(preset, date){
   const suggested=new Set();
   if(wi!==null){ weekFoods(wi).forEach(id=>suggested.add(id)); if(PLAN[wi].alg) suggested.add(PLAN[wi].alg); }
   FOODS.forEach(f=>{ if(stat(f.id).n) suggested.add(f.id); });
-  F={foods:new Set(preset?[preset]:[]), date:date||fd(today()), avis:'', signal:'', qty:'', mode:'cuillere', shared:false, reac:'aucune', note:'', who:LS.get('div_who',''), other:''};
+  F={foods:new Set(preset?[preset]:[]), date:date||fd(today()), avis:'', signal:'', qty:'', mode:'cuillere', shared:false, reac:'aucune', note:'', who:LS.get('div_who',''), other:'', otherCat:'leg'};
   if(preset) suggested.add(preset);
   F.suggested=[...suggested];
   drawLog();
@@ -690,7 +715,10 @@ function drawLog(){
    <div class="fld"><span class="lab">Aliment(s) proposé(s)</span>
      <div class="foodpick">${sug.map(id=>`<button type="button" class="chip ${F.foods.has(id)?'on g':''}" data-food="${id}">${esc(fname(id))}</button>`).join('')}</div>
      <select id="addfood" style="margin-top:8px"><option value="">+ Un autre aliment de la liste…</option>${Object.entries(CATS).map(([c,cn])=>`<optgroup label="${esc(cn)}">${rest.filter(f=>f.c===c).map(f=>`<option value="${f.id}">${esc(f.n)}</option>`).join('')}</optgroup>`).join('')}</select>
-     <input type="text" id="other" placeholder="…ou un aliment hors liste (ex. : topinambour)" style="margin-top:8px" value="${esc(F.other)}">
+     <div class="newfood"><span class="lab">Pas dans la liste ?</span>
+       <input type="text" id="other" placeholder="Nom de l'aliment (ex. : topinambour)" value="${esc(F.other)}" enterkeyhint="done">
+       <select id="othercat" aria-label="Catégorie">${Object.entries(CATS).filter(([c])=>c!=='alg').map(([c,cn])=>`<option value="${c}" ${F.otherCat===c?'selected':''}>${esc(cn)}</option>`).join('')}</select>
+       <button type="button" class="btn sm sec" id="addOther">＋ Ajouter</button></div>
    </div>
    ${hasAlgNew?`<div class="info" style="margin-top:10px">Nouvel allergène : de préférence le matin ou le midi, à la maison, et observez Pedro pendant 2 heures.</div>`:''}
    <div class="fld"><label for="date">Date</label><input type="date" id="date" value="${F.date}"></div>
@@ -710,16 +738,20 @@ function drawLog(){
 function captureLog(){
   const g=id=>document.getElementById(id);
   if(!g('date')) return;
-  F.date=g('date').value||F.date; F.note=g('note').value; F.who=g('who').value; F.other=g('other').value; F.shared=g('shared').checked;
+  F.date=g('date').value||F.date; F.note=g('note').value; F.who=g('who').value; F.other=g('other').value; F.otherCat=g('othercat').value; F.shared=g('shared').checked;
+}
+// nom tapé → aliment de la liste s'il existe déjà, sinon nouvel aliment ; coché dans le repas en cours
+function pickOther(){
+  const id=addCustom(F.other,F.otherCat); if(!id) return;
+  F.foods.add(id); if(!F.suggested.includes(id)) F.suggested.push(id); F.other='';
 }
 async function saveLog(){
-  captureLog();
-  const list=[...F.foods]; const other=F.other.trim();
-  if(!list.length && !other){ alertBox('Choisissez au moins un aliment.'); return; }
+  captureLog(); pickOther();
+  const list=[...F.foods];
+  if(!list.length){ alertBox('Choisissez au moins un aliment.'); return; }
   LS.set('div_who',F.who.trim());
   const base={date:F.date,avis:F.avis||'bof',signal:F.signal,qty:F.qty,mode:F.mode,shared:F.shared,reac:F.reac,note:F.note.trim().slice(0,500),who:F.who.trim().slice(0,40),ts:new Date().toISOString()};
-  const items=list.map(id=>({...base,food:id,foodName:fname(id)}));
-  if(other) items.push({...base,food:'autre:'+other.toLowerCase().slice(0,60),foodName:other.slice(0,60)});
+  const items=list.map(id=>({...base,food:id,foodName:fname(id),...(FMAP[id]?.custom?{cat:FMAP[id].c}:{})}));
   closeModal();
   const ids=await addEntries(items);
   toastUndo(ids, items.length>1?`${items.length} aliments notés`:`${items[0].foodName} noté`);
@@ -751,6 +783,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.food){ captureLog(); const id=t.dataset.food; F.foods.has(id)?F.foods.delete(id):F.foods.add(id); drawLog(); return; }
   if(t.dataset.set){ captureLog(); const k=t.dataset.set; F[k] = (F[k]===t.dataset.v && k!=='mode' && k!=='reac') ? '' : t.dataset.v; drawLog(); return; }
   if(t.id==='saveLog'){ saveLog(); return; }
+  if(t.id==='addOther'){ captureLog(); pickOther(); drawLog(); return; }
   if(t.id==='saveSet'){ const g=id=>document.getElementById(id).value; saveSettings({name:g('sName').trim().slice(0,40),birth:g('sBirth'),start:g('sStart')}); closeModal(); return; }
   if(t.dataset.ff){ FF=t.dataset.ff; render(); return; }
   if(t.dataset.pause!==undefined){ const i=+t.dataset.pause; saveSettings({pauses:[...(S.settings.pauses||[]),i]}); return; }

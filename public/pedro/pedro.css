@@ -460,6 +460,11 @@ nav.tabs a.on {
 }
 .food.done {
   border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--card));
+}
+.food.disc {
+  border-left-color: var(--deep);
+  background: color-mix(in srgb, var(--deep) 5%, var(--card));
 }
 .food.ref {
   border-left-color: var(--gold);
@@ -979,4 +984,54 @@ details.week > summary:active {
 }
 .sheet-head {
   touch-action: pan-y;
+}
+
+/* Aliments : compteurs, synthèse, aliment hors liste */
+.chip .n {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+/* Synthèse en tête d'Aliments : barre empilée + légende (mêmes couleurs que le liseré des cartes) */
+.synth .jauge {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--line);
+}
+.synth .jauge .done,
+.synth .legend .done {
+  background: var(--accent);
+}
+.synth .jauge .cours,
+.synth .legend .cours {
+  background: var(--deep);
+}
+.synth .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 10px 0 4px;
+  font-size: 14px;
+}
+.synth .legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 6px;
+  background: var(--line);
+}
+
+/* Noter un repas : aliment hors liste */
+.newfood {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 12px;
+}
+.newfood .lab,
+.newfood input {
+  grid-column: 1 / -1;
 }
