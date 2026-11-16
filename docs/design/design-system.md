@@ -52,16 +52,16 @@ Police système (`-apple-system`, SF Pro sur Apple) : aucune police chargée, po
 
 ## Composants
 
-| Composant         | Classe    | Règle                                                                                |
-| ----------------- | --------- | ------------------------------------------------------------------------------------ |
-| Tuile d'accueil   | `.tile`   | icône 56 px sur fond coloré, titre, sous-titre, compteur mono à droite               |
-| Contrôle segmenté | `.seg`    | 2 ou 3 segments, le segment actif est une carte blanche                              |
-| Chips de filtre   | `.chip`   | une seule active ; active = inversée (`--fg` sur `--bg`)                             |
-| Fiche film        | `.film`   | affiche 2:3 à gauche (84 px), titre, méta, genres, notes externes, notes 🐊 🐬       |
-| Notes             | `.stars`  | 5 pastilles de 10 px, remplies en `--gold`, valeur en mono à côté                    |
-| Feuille           | `.sheet`  | montée depuis le bas, poignée, boutons pleine largeur, se ferme au clic hors panneau |
-| Barre d'onglets   | `.tabbar` | 4 onglets, flou d'arrière-plan, onglet actif en `--accent`                           |
-| Toast             | `.toast`  | pilule `--fg` sur `--bg`, 2,5 s                                                      |
+| Composant         | Classe    | Règle                                                                                                  |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------ |
+| Tuile d'accueil   | `.tile`   | icône 56 px sur fond coloré, titre, sous-titre, compteur mono à droite                                 |
+| Contrôle segmenté | `.seg`    | 2 ou 3 segments, le segment actif est une carte blanche                                                |
+| Chips de filtre   | `.chip`   | une seule active ; active = inversée (`--fg` sur `--bg`)                                               |
+| Fiche film        | `.film`   | affiche 2:3 à gauche (84 px), titre, méta, genres, notes externes, notes 🐊 🐬                         |
+| Notes             | `.stars`  | 5 pastilles de 10 px, remplies en `--gold`, valeur en mono à côté                                      |
+| Feuille           | `.sheet`  | montée depuis le bas, poignée, boutons pleine largeur, se ferme au clic hors panneau                   |
+| Barre d'onglets   | `.tabbar` | capsule flottante floutée, 4 onglets ; l'actif est une pilule `--accent` qui glisse (View Transitions) |
+| Toast             | `.toast`  | pilule `--fg` sur `--bg`, 2,5 s                                                                        |
 
 ## Identité des personnes
 
@@ -70,5 +70,7 @@ Pedro = 🐦.
 
 ## Pedro
 
-La page Diversification garde ses propres variables CSS (`--sage`, `--peach`, `--blue`…) et sa police Fraunces / Inter :
-on les remappe sur la palette PCD (`scripts/`, voir `public/pedro/index.html`), on ne redessine rien.
+Trois onglets en contrôle segmenté (Semaine, Aliments, Progrès), pas de titre, bouton ＋ rond pour noter un repas.
+Listes façon iOS : une ligne par aliment, emoji d'avis seulement si déjà goûté, badge « nouveau » à la première fois.
+Code couleur des aliments (point, barre, pastilles) : `--accent` goûté, `--deep` en cours, `--gold` à retenter,
+`--danger` réaction, `--line` à tester. Les alias `--sage`, `--peach`, `--blue`… de `pedro.css` pointent sur ces tokens.

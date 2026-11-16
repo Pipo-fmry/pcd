@@ -13,30 +13,19 @@
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div>
-      <div class="eyebrow">🐦 Pedro</div>
-      <h1 id="title">Diversification</h1>
-      <div class="sub" id="agebar">…</div>
-    </div>
-    <div class="row" style="gap:8px;flex-wrap:nowrap">
-      <span class="sync" id="sync">Connexion…</span>
-      <button type="button" class="iconbtn" id="openSettings" aria-label="Réglages" title="Réglages">⚙︎</button>
-    </div>
+  <header class="entete">
+    <nav class="tabs" id="tabs" aria-label="Diversification de Pedro">
+      <a href="#semaine" data-t="semaine">Semaine</a>
+      <a href="#aliments" data-t="aliments">Aliments</a>
+      <a href="#progres" data-t="progres">Progrès</a>
+    </nav>
   </header>
-
-  <nav class="tabs" id="tabs">
-    <a href="#aujourdhui" data-t="aujourdhui">Aujourd'hui</a>
-    <a href="#planning" data-t="planning">Planning</a>
-    <a href="#aliments" data-t="aliments">Aliments</a>
-  </nav>
-
   <main id="view"></main>
 </div>
 
-<button type="button" class="btn fab" id="fab">＋ Noter un repas</button>
+<button type="button" class="btn fab" id="fab" aria-label="Noter un repas">＋</button>
 
-<div class="modal-bg" id="mbg"><div class="modal" id="modal"></div></div>
+<div class="modal-bg" id="mbg"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
 
 <div class="pcd-tabbar"><nav>
   <a href="/#accueil"><span class="i">⌂</span>Accueil</a>
@@ -46,170 +35,117 @@
 </nav></div>
 <script src="/pedro/shim.js"></script>
 <script>
-/* ================= DONNÉES ================= */
-// saisons : mois (1-12) où l'aliment est de saison à Marseille ; [] = toujours disponible
+/* ================= RÉFÉRENTIELS ================= */
+// s : mois (1-12) de saison à Marseille ; [] = toujours disponible
 const FOODS = [
  // légumes
- {id:'courgette',n:'Courgette',c:'leg',s:[5,6,7,8,9,10,11],tip:'Sans peau ni pépins, cuite vapeur, mixée. Fin de saison sur le marché.'},
+ {id:'courgette',n:'Courgette',c:'leg',s:[5,6,7,8,9,10,11],tip:'Sans peau ni pépins, cuite vapeur, mixée.'},
  {id:'brocoli',n:'Brocoli',c:'leg',s:[10,11,12,1,2,3],tip:'Les fleurettes, bien cuites, mixées.'},
- {id:'epinard',n:'Épinard',c:'leg',s:[10,11,12,1,2,3,4],tip:'Frais : équeuté, bien cuit, mixé finement. Surgelé nature possible.'},
+ {id:'epinard',n:'Épinard',c:'leg',s:[10,11,12,1,2,3,4],tip:'Équeuté, bien cuit, mixé finement.'},
  {id:'poireau',n:'Poireau (blanc)',c:'leg',s:[9,10,11,12,1,2,3,4],tip:'Uniquement le blanc, bien cuit.'},
  {id:'choufleur',n:'Chou-fleur',c:'leg',s:[10,11,12,1,2,3,4],tip:'Fleurettes bien cuites.'},
  {id:'navet',n:'Navet',c:'leg',s:[10,11,12,1,2,3],tip:'Petit navet nouveau, épluché.'},
  {id:'panais',n:'Panais',c:'leg',s:[10,11,12,1,2,3],tip:'Goût doux, légèrement sucré.'},
- {id:'carotte',n:'Carotte',c:'leg',s:[],tip:'Légume sucré : arrive après les verts.'},
+ {id:'carotte',n:'Carotte',c:'leg',s:[],tip:'Légume sucré : après les verts.'},
  {id:'potiron',n:'Potiron / butternut',c:'leg',s:[9,10,11,12,1,2],tip:'Sucré et onctueux.'},
- {id:'patatedouce',n:'Patate douce',c:'leg',s:[9,10,11,12,1],tip:'Sucrée, très bien acceptée. En bâtonnets fondants dès 6 mois.'},
- {id:'pdt',n:'Pomme de terre',c:'leg',s:[],tip:'Peut servir de liant pour épaissir n\'importe quelle purée.'},
- {id:'blette',n:'Blette',c:'leg',s:[10,11,12,1,2,3,4,5],tip:'Le vert, bien cuit. Très provençal.'},
+ {id:'patatedouce',n:'Patate douce',c:'leg',s:[9,10,11,12,1],tip:'Sucrée, très bien acceptée.'},
+ {id:'pdt',n:'Pomme de terre',c:'leg',s:[],tip:'Sert de liant pour épaissir une purée.'},
+ {id:'artichaut',n:'Artichaut',c:'leg',s:[4,5,6,7,8,9],tip:'Le fond, bien cuit, mixé.'},
+ {id:'blette',n:'Blette',c:'leg',s:[10,11,12,1,2,3,4,5],tip:'Le vert, bien cuit.'},
  {id:'fenouil',n:'Fenouil',c:'leg',s:[10,11,12,1,2,3,4],tip:'Cuit et mixé, goût anisé doux.'},
- {id:'betterave',n:'Betterave',c:'leg',s:[9,10,11,12,1,2,3],tip:'Cuite. Colore les couches, c\'est normal !'},
+ {id:'betterave',n:'Betterave',c:'leg',s:[9,10,11,12,1,2,3],tip:'Cuite. Colore les couches, c\'est normal.'},
  {id:'endive',n:'Endive (cuite)',c:'leg',s:[10,11,12,1,2,3],tip:'Amère : bon entraînement du goût.'},
- {id:'haricotvert',n:'Haricot vert (surgelé)',c:'leg',s:[],tip:'Surgelé nature : bonne option hors saison.'},
- {id:'petitspois',n:'Petits pois',c:'leg',s:[5,6,7],tip:'Extra-fins (surgelés hors saison) : bien cuits, mixés puis passés au tamis pour la peau.'},
+ {id:'haricotvert',n:'Haricot vert',c:'leg',s:[],tip:'Surgelé nature hors saison.'},
+ {id:'petitspois',n:'Petits pois',c:'leg',s:[5,6,7],tip:'Bien cuits, mixés puis tamisés.'},
  {id:'avocat',n:'Avocat',c:'leg',s:[11,12,1,2,3,4,5],tip:'Bien mûr, écrasé, cru.'},
  // fruits
- {id:'pomme',n:'Pomme (cuite)',c:'fru',s:[9,10,11,12,1,2,3,4],tip:'Compote maison sans sucre. Jamais crue dure en morceaux.'},
- {id:'poire',n:'Poire',c:'fru',s:[9,10,11,12,1,2],tip:'Cuite au début, puis crue très mûre écrasée.'},
+ {id:'pomme',n:'Pomme (cuite)',c:'fru',s:[9,10,11,12,1,2,3,4],tip:'Compote maison sans sucre.'},
+ {id:'poire',n:'Poire',c:'fru',s:[9,10,11,12,1,2],tip:'Cuite, puis crue très mûre écrasée.'},
  {id:'banane',n:'Banane',c:'fru',s:[],tip:'Bien mûre, écrasée.'},
  {id:'clementine',n:'Clémentine',c:'fru',s:[11,12,1,2],tip:'Quelques quartiers pressés dans une compote.'},
- {id:'kiwi',n:'Kiwi',c:'fru',s:[11,12,1,2,3,4],tip:'Acide : en petite quantité dans une compote.'},
- {id:'kaki',n:'Kaki (bien mûr)',c:'fru',s:[10,11,12],tip:'Très mûr, à la cuillère.'},
+ {id:'kiwi',n:'Kiwi',c:'fru',s:[11,12,1,2,3,4],tip:'Acide : un peu dans une compote.'},
+ {id:'kaki',n:'Kaki',c:'fru',s:[10,11,12],tip:'Très mûr, à la cuillère.'},
  // féculents
- {id:'semoule',n:'Semoule de blé',c:'fec',alg:'ble',s:[],tip:'Semoule fine cuite dans l\'eau des légumes.'},
+ {id:'semoule',n:'Semoule de blé',c:'fec',alg:'ble',s:[],tip:'Fine, cuite dans l\'eau des légumes.'},
  {id:'riz',n:'Riz',c:'fec',s:[],tip:'Bien cuit, mixé avec les légumes.'},
- {id:'avoine',n:'Flocons d\'avoine',c:'fec',s:[],tip:'Contiennent du gluten. Cuits dans de l\'eau ou de son lait.'},
+ {id:'avoine',n:'Flocons d\'avoine',c:'fec',s:[],tip:'Contiennent du gluten.'},
  {id:'quinoa',n:'Quinoa',c:'fec',s:[],tip:'Bien rincé et cuit.'},
- {id:'lentilles',n:'Lentilles corail',c:'fec',s:[],tip:'Très cuites, mixées. 1 c. à café au début.'},
+ {id:'lentilles',n:'Lentilles corail',c:'fec',s:[],tip:'Très cuites, mixées.'},
  {id:'poischiche',n:'Pois chiche',c:'fec',s:[],tip:'Mixé très finement, sans peau.'},
  // protéines
- {id:'poulet',n:'Poulet',c:'pro',s:[],tip:'Bien cuit, mixé. 5 g max/jour avant 6 mois, 10 g après.'},
+ {id:'poulet',n:'Poulet',c:'pro',s:[],tip:'Bien cuit, mixé.'},
  {id:'dinde',n:'Dinde',c:'pro',s:[],tip:'Bien cuite, mixée.'},
  {id:'boeuf',n:'Bœuf',c:'pro',s:[],tip:'Riche en fer. Bien cuit, mixé.'},
  {id:'veau',n:'Veau',c:'pro',s:[],tip:'Bien cuit, mixé.'},
- {id:'poisson',n:'Poisson blanc',c:'pro',alg:'poisson',s:[],tip:'Cabillaud, colin, lieu : vapeur, sans arêtes, mixé.'},
- {id:'saumon',n:'Saumon',c:'pro',alg:'poisson',s:[],tip:'Poisson gras, bien cuit, sans arêtes.'},
- {id:'oeuf',n:'Œuf (bien cuit)',c:'pro',alg:'oeuf',s:[],tip:'Œuf dur 10 min, blanc + jaune écrasés.'},
+ {id:'poisson',n:'Poisson blanc',c:'pro',alg:'poisson',s:[],tip:'Vapeur, sans arêtes, mixé.'},
+ {id:'saumon',n:'Saumon',c:'pro',alg:'poisson',s:[],tip:'Bien cuit, sans arêtes.'},
+ {id:'oeuf',n:'Œuf',c:'pro',alg:'oeuf',s:[],tip:'Dur (10 min), blanc + jaune écrasés.'},
  // laitiers
  {id:'yaourt',n:'Yaourt nature',c:'lai',alg:'lait',s:[],tip:'Au lait entier, sans sucre.'},
- {id:'fromageblanc',n:'Fromage blanc nature',c:'lai',alg:'lait',s:[],tip:'Entier, sans sucre.'},
+ {id:'fromageblanc',n:'Fromage blanc',c:'lai',alg:'lait',s:[],tip:'Entier, sans sucre.'},
  {id:'beurre',n:'Beurre',c:'gra',s:[],tip:'Une noisette dans la purée.'},
- // allergènes « fruits à coque & co »
- {id:'arachide',n:'Arachide',c:'alg',alg:'arachide',s:[],tip:'Beurre de cacahuète 100 %, lisse, délayé. Jamais entier.'},
- {id:'amande',n:'Amande',c:'alg',alg:'amande',s:[],tip:'Poudre fine ou purée 100 %, dans une compote.'},
+ // arachide, fruits à coque & co
+ {id:'arachide',n:'Arachide',c:'alg',alg:'arachide',s:[],tip:'Beurre de cacahuète 100 %, délayé. Jamais entier.'},
+ {id:'amande',n:'Amande',c:'alg',alg:'amande',s:[],tip:'Poudre fine ou purée 100 %.'},
  {id:'noisette',n:'Noisette',c:'alg',alg:'noisette',s:[],tip:'Poudre ou purée 100 %.'},
- {id:'sesame',n:'Sésame (tahini)',c:'alg',alg:'sesame',s:[],tip:'Purée de sésame, une pointe dans la purée.'},
+ {id:'sesame',n:'Sésame (tahini)',c:'alg',alg:'sesame',s:[],tip:'Une pointe de purée de sésame.'},
  {id:'cajou',n:'Noix de cajou',c:'alg',alg:'cajou',s:[],tip:'Purée 100 %.'},
  {id:'noix',n:'Noix',c:'alg',alg:'noix',s:[],tip:'Poudre très fine.'},
  {id:'pistache',n:'Pistache',c:'alg',alg:'pistache',s:[],tip:'Purée 100 % ou poudre fine.'},
  {id:'soja',n:'Soja (tofu)',c:'alg',alg:'soja',s:[],tip:'Tofu soyeux écrasé.'},
  {id:'crevette',n:'Crevette',c:'alg',alg:'crustaces',s:[],tip:'Cuite, mixée.'},
  // matières grasses
- {id:'colza',n:'Huile de colza',c:'gra',s:[],tip:'1 c. à café rase dans la purée (oméga-3).'},
+ {id:'colza',n:'Huile de colza',c:'gra',s:[],tip:'1 c. à café rase dans la purée.'},
  {id:'olive',n:'Huile d\'olive',c:'gra',s:[],tip:'1 c. à café rase dans la purée.'},
 ];
-const CATS = {leg:'Légumes',fru:'Fruits',fec:'Féculents & légumineuses',pro:'Viande, poisson, œuf',lai:'Produits laitiers',alg:'Arachide, fruits à coque & co',gra:'Matières grasses',aut:'Ajoutés par vous'};
+const CATS = {leg:'Légumes',fru:'Fruits',fec:'Féculents',pro:'Viande, poisson, œuf',lai:'Laitiers',alg:'Arachide, fruits à coque & co',gra:'Matières grasses',aut:'Autres'};
+// catégories proposées pour un aliment hors liste
+const CAT_COURT = {leg:'Légume',fru:'Fruit',fec:'Féculent',pro:'Protéine',lai:'Laitier',gra:'Matière grasse',aut:'Autre'};
 const FMAP = Object.fromEntries(FOODS.map(f=>[f.id,f]));
-// Aliments hors liste ajoutés depuis « Noter un repas » : pas de liste à part, ils se déduisent du journal
-// (food = 'autre:<nom>', cat = catégorie choisie ; les anciennes entrées sans cat vont dans « Ajoutés par vous »).
-const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-function customFood(id,n,c){
-  if(FMAP[id]) return FMAP[id];
-  const f={id,n,c:CATS[c]&&c!=='alg'?c:'aut',s:[],tip:'Ajouté par vous.',custom:true};
-  FOODS.push(f); FMAP[id]=f; return f;
-}
-function addCustom(name,c){
-  const n=String(name||'').trim().slice(0,60); if(!n) return null;
-  const hit=FOODS.find(f=>norm(f.n)===norm(n) || norm(f.n.replace(/\s*\(.*\)/,''))===norm(n));
-  return hit ? hit.id : customFood('autre:'+n.toLowerCase(),n,c).id;
-}
-const syncCustom = () => S.entries.forEach(e=>{ if(String(e.food).startsWith('autre:')) customFood(e.food,e.foodName||e.food.slice(6),e.cat); });
+const WHO = ['Morgane','François','Sandrine'];
 
-// groupes allergènes : tier 1 = prioritaires (2-3×/sem), tier 2 = 1×/sem minimum
+// groupes allergènes : target = prises par semaine pour l'entretien une fois toléré
 const ALG = {
- lait:{n:'Lait (yaourt)',tier:1,target:2},
- oeuf:{n:'Œuf',tier:1,target:2},
- arachide:{n:'Arachide',tier:1,target:3},
- ble:{n:'Blé',tier:2,target:1},
- poisson:{n:'Poisson',tier:2,target:1},
- amande:{n:'Amande',tier:2,target:1},
- noisette:{n:'Noisette',tier:2,target:1}, sesame:{n:'Sésame',tier:2,target:1}, cajou:{n:'Cajou',tier:2,target:1},
- noix:{n:'Noix',tier:2,target:1}, pistache:{n:'Pistache',tier:2,target:1}, soja:{n:'Soja',tier:2,target:1}, crustaces:{n:'Crustacés',tier:2,target:1},
+ lait:{n:'Lait',target:2}, oeuf:{n:'Œuf',target:2}, arachide:{n:'Arachide',target:3},
+ ble:{n:'Blé',target:1}, poisson:{n:'Poisson',target:1}, amande:{n:'Amande',target:1},
+ noisette:{n:'Noisette',target:1}, sesame:{n:'Sésame',target:1}, cajou:{n:'Cajou',target:1},
+ noix:{n:'Noix',target:1}, pistache:{n:'Pistache',target:1}, soja:{n:'Soja',target:1}, crustaces:{n:'Crustacés',target:1},
 };
+const PRIORITAIRES = ['lait','oeuf','arachide'];
+const ENT_FOOD = {lait:'yaourt',oeuf:'oeuf',ble:'semoule',arachide:'arachide',poisson:'poisson',amande:'amande'};
 
-// protocoles d'introduction des allergènes du planning
+// dose de chaque prise d'introduction d'un allergène
 const PROTO = {
- yaourt:{how:'Yaourt nature au lait de vache entier, sans sucre (pas de lait de vache en boisson avant 1 an).',
-   steps:['½ cuillère à café, seul ou dans une purée déjà connue','1 cuillère à café','1 à 2 cuillères à café'],
-   keep:'2 à 3 fois par semaine : au goûter, ou une cuillère dans la purée.'},
- semoule:{how:'Semoule fine de blé, cuite dans l\'eau de cuisson des légumes. Gluten : petites quantités les premières semaines.',
-   steps:['¼ cuillère à café de semoule cuite dans la purée','½ cuillère à café','1 cuillère à café'],
-   keep:'1 fois par semaine minimum (semoule, petites pâtes mixées, croûte de pain plus tard).'},
- oeuf:{how:'Œuf cuit dur (10 min), blanc + jaune écrasés très finement dans la purée. Jamais peu cuit.',
-   steps:['Une pointe de cuillère (≈ ¼ c. à café)','½ cuillère à café','1 cuillère à café (≈ 5 g, le maximum avant 6 mois)'],
-   keep:'2 fois par semaine. À partir de 6 mois : jusqu\'à ¼ d\'œuf.'},
- arachide:{how:'Beurre de cacahuète 100 % arachide, lisse, sans sel ni sucre, délayé dans un peu d\'eau chaude puis mélangé à la purée. Jamais pur, jamais d\'arachide entière.',
-   steps:['¼ cuillère à café délayée','½ cuillère à café','1 cuillère à café'],
-   keep:'2 à 3 fois par semaine. Repère LEAP à atteindre progressivement sur plusieurs semaines : ~2 c. à café rases par prise.'},
- poisson:{how:'Poisson blanc (cabillaud, colin, lieu) cuit vapeur, sans arêtes, mixé. Pas d\'espadon, requin ni marlin.',
-   steps:['Une pointe de cuillère','½ cuillère à café','1 cuillère à café (≈ 5 g)'],
-   keep:'1 à 2 fois par semaine. 10 g max à partir de 6 mois.'},
- amande:{how:'Poudre d\'amande fine ou purée d\'amande 100 %, dans une compote ou un yaourt.',
-   steps:['¼ cuillère à café','½ cuillère à café','1 cuillère à café'],
-   keep:'1 fois par semaine minimum. Astuce : yaourt + poudre d\'amande = 2 allergènes entretenus d\'un coup.'},
+ yaourt:['½ c. à café','1 c. à café','1 à 2 c. à café'],
+ semoule:['¼ c. à café','½ c. à café','1 c. à café'],
+ oeuf:['une pointe de cuillère','½ c. à café','1 c. à café'],
+ arachide:['¼ c. à café délayée','½ c. à café','1 c. à café'],
+ poisson:['une pointe de cuillère','½ c. à café','1 c. à café'],
+ amande:['¼ c. à café','½ c. à café','1 c. à café'],
 };
 
-// planning des 8 premières semaines
+// programme des 8 premières semaines ; qt = repère de quantité (affiché seulement quand il change)
 const PLAN = [
- {t:'Découverte en douceur', news:['courgette','brocoli'], alg:null,
-  rythme:'3 à 4 jours sur 7, un seul repas (midi ou goûter).',
-  qte:'1 à 2 cuillères à café par prise. Purée lisse, sans sel.',
-  tips:['Un seul légume par prise, pour qu\'il découvre chaque goût.','Mangez du même légume devant lui, et dites que c\'est bon.','S\'il a très faim, donnez d\'abord un peu de lait.']},
- {t:'Les légumes verts', news:['epinard','poireau'], alg:null,
-  rythme:'3 à 4 jours sur 7.',
-  qte:'1 à 2 cuillères à café, jusqu\'à 3-4 s\'il en redemande.',
-  tips:['Reproposez courgette et brocoli un jour sur deux.','Poireau : uniquement le blanc.']},
- {t:'Premier allergène : le lait', news:['choufleur','navet'], alg:'yaourt',
-  rythme:'4 à 5 jours sur 7.',
-  qte:'Quelques cuillères à café selon l\'appétit. Ajoutez 1 c. à café rase d\'huile de colza ou d\'olive dans la purée.',
-  tips:['On peut mélanger deux légumes déjà connus.']},
- {t:'Le blé', news:['panais','carotte'], alg:'semoule',
-  rythme:'4 à 5 jours sur 7.',
-  qte:'Purée : jusqu\'à 2 à 4 cuillères à soupe selon l\'appétit.',
-  tips:['Carotte : légume plus sucré, il arrive après les verts.']},
- {t:'Premier fruit + l\'œuf', news:['pomme','potiron'], alg:'oeuf',
-  rythme:'Presque tous les jours, 1 repas.',
-  qte:'Purée : jusqu\'à 60-100 g selon l\'appétit. Fruit : 1-2 c. à café de compote maison sans sucre au début.',
-  tips:['Le fruit plutôt au goûter, séparé des légumes.','La pomme de terre peut servir de liant.']},
- {t:'L\'arachide', news:['poire','poulet'], alg:'arachide',
-  rythme:'Tous les jours, 1 repas.',
-  qte:'Viande / poisson / œuf : 5 g maximum par jour avant 6 mois (1 c. à café rase), mixé dans la purée.',
-  tips:['Poulet bien cuit, mixé finement.']},
- {t:'Le poisson · semaine de Noël', news:['lentilles','patatedouce'], alg:'poisson',
-  rythme:'Tous les jours, 1 repas.',
-  qte:'Purée : 100 à 130 g selon l\'appétit. Lentilles corail : 1 c. à café, très cuites.',
-  tips:['Nouvel allergène un jour à la maison, pas un jour de trajet ou de grand repas.']},
- {t:'L\'amande · semaine du Nouvel An', news:['banane','boeuf','riz'], alg:'amande',
-  rythme:'Tous les jours, 1 repas (+ un goûter fruit si envie).',
-  qte:'Purée : 130 à 150 g selon l\'appétit. Protéines : 5 g jusqu\'au 5 janvier, puis 10 g max (2 c. à café rases) à partir de 6 mois.',
-  tips:['À 6 mois : textures plus épaisses, puis premiers morceaux à attraper s\'il tient assis seul.']},
+ {t:'Découverte en douceur', news:['courgette','brocoli'], alg:null, qt:'1 à 2 c. à café',
+  know:['Il ouvre la bouche = il veut ; il détourne la tête = il a fini. Le lait reste l\'essentiel.','Avant 1 an, jamais : miel, sel, sucre ajouté, lait de vache en boisson.']},
+ {t:'Les légumes verts', news:['epinard','poireau'], alg:null, qt:'1 à 4 c. à café',
+  know:['Refus ? Normal. On repropose 2-3 jours plus tard, jusqu\'à 10 fois.','Mangez du même légume devant lui.']},
+ {t:'Premier allergène : le lait', news:['choufleur','navet'], alg:'yaourt', qt:'quelques c. à café + 1 c. à café d\'huile',
+  know:['Rougeur autour de la bouche = souvent bénin. Plaques, gonflement, vomissements = on arrête et on appelle le médecin.','Gêne pour respirer, malaise, pâleur = 15.']},
+ {t:'Le blé', news:['panais','carotte'], alg:'semoule', qt:'2 à 4 c. à soupe',
+  know:['Gluten : petites quantités les premières semaines.']},
+ {t:'Premier fruit + l\'œuf', news:['pomme','potiron'], alg:'oeuf', qt:'60 à 100 g · fruit 1-2 c. à café',
+  know:['Le fruit plutôt au goûter, séparé des légumes.','Œuf toujours bien cuit.']},
+ {t:'L\'arachide', news:['poire','poulet'], alg:'arachide', qt:'60 à 100 g · viande 5 g',
+  know:['Arachide et fruits à coque : jamais entiers avant 4 ans.','Viande, poisson, œuf : 5 g max par jour avant 6 mois.']},
+ {t:'Le poisson', news:['lentilles','patatedouce'], alg:'poisson', qt:'100 à 130 g',
+  know:['Pas d\'espadon, requin, marlin ni poisson cru.','Fêtes : nouvel allergène seulement un jour à la maison.']},
+ {t:'L\'amande', news:['banane','boeuf','riz'], alg:'amande', qt:'130 à 150 g · viande 10 g dès 6 mois',
+  know:['À 6 mois : textures plus épaisses, premiers morceaux s\'il tient assis seul.','Haut-le-cœur = réflexe normal. Vraie fausse route = silencieuse.']},
 ];
-
-
-// repères par semaine (ex-onglet Repères)
-PLAN[0].j="4 j/7"; PLAN[0].know=["Pedro est prêt s'il tient sa tête, s'intéresse à vos assiettes et ne repousse plus la cuillère avec la langue.", "Sans pression : il ouvre la bouche = il veut ; il détourne la tête = il a fini. Le lait reste l'essentiel (500 à 750 ml/jour).", "Avant 1 an, jamais : miel, sel ou sucre ajoutés, lait de vache en boisson, boissons végétales à la place du lait."];
-PLAN[1].j="4 j/7"; PLAN[1].know=["Refus ? Normal. On repropose 2-3 jours plus tard, en changeant la présentation, jusqu'à 10 fois.", "Mangez du même légume devant lui : c'est le levier le plus efficace pour qu'il l'accepte."];
-PLAN[2].j="5 j/7"; PLAN[2].know=["Premier allergène : posez la question au pédiatre si ce n'est pas fait : « Mon enfant est-il à risque d'allergie (eczéma, allergie connue) ? »", "Rougeur autour de la bouche = souvent bénin. Plaques, gonflement du visage, vomissements répétés = on arrête et on appelle le médecin.", "Gêne pour respirer, malaise, pâleur, somnolence inhabituelle = appelez le 15."];
-PLAN[3].j="5 j/7"; PLAN[3].know=["Gluten : petites quantités les premières semaines.", "Un allergène toléré revient ensuite régulièrement : c'est ce que font les lignes « entretien » du programme."];
-PLAN[4].j="7 j/7"; PLAN[4].know=["Les fruits arrivent après 4 semaines de légumes : ils ne remplacent pas les légumes.", "Œuf toujours bien cuit (jamais à la coque ni mollet avant 1 an)."];
-PLAN[5].j="7 j/7"; PLAN[5].know=["Arachide et fruits à coque : jamais entiers ni en morceaux avant 4 ans, seulement en purée ou poudre.", "Viande, poisson, œuf : 5 g max par jour avant 6 mois, toujours bien cuits."];
-PLAN[6].j="7 j/7"; PLAN[6].know=["Pas de grands poissons prédateurs (espadon, requin, marlin) ni de poisson cru.", "Fêtes : un nouvel allergène uniquement un jour à la maison. Décaler de quelques jours n'est pas grave."];
-PLAN[7].j="7 j/7"; PLAN[7].know=["À 6 mois (5 janvier) : protéines jusqu'à 10 g/jour, textures plus épaisses, premiers morceaux à attraper s'il tient assis seul.", "Haut-le-cœur (il tousse, rougit, recrache) = réflexe normal. Vraie fausse route = silencieuse, il ne peut ni tousser ni pleurer.", "Un cours de premiers secours nourrisson (Croix-Rouge, Protection civile) est une excellente idée avant les morceaux."];
-const AVIS = {aime:{e:'😋',n:'Aime',cls:'g'},bof:{e:'😐',n:'Mitigé',cls:''},refuse:{e:'🙅',n:'Refuse',cls:'o'}};
-const SIGNAUX = {interesse:'Intéressé, ouvre la bouche',detourne:'Détourne la tête / rassasié',fatigue:'Fatigué ou grognon'};
-const QTE = {pointe:'Une pointe',cc:'1-2 c. à café',qq:'Quelques c. à café',cs:'Cuillères à soupe +'};
-const MODE = {cuillere:'Cuillère',doigts:'Doigts',mixte:'Mixte'};
-const REAC = {aucune:{n:'Aucune',cls:'g'},legere:{n:'Rougeur autour de la bouche',cls:''},surveiller:{n:'À surveiller (plaques, eczéma, digestif)',cls:'o'},serieuse:{n:'Sérieuse (urticaire étendu, gonflement, vomissements)',cls:'r'}};
+const AVIS = {aime:{e:'😋',n:'Aime'},bof:{e:'😐',n:'Mitigé'},refuse:{e:'🙅',n:'Refuse'}};
+const REAC = {aucune:{n:'Aucune',cls:'g'},legere:{n:'Rougeur autour de la bouche',cls:''},surveiller:{n:'À surveiller',cls:'o'},serieuse:{n:'Sérieuse',cls:'r'}};
+const estRx = e => e.reac==='surveiller' || e.reac==='serieuse';
 
 /* ================= UTILITAIRES ================= */
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -219,53 +155,63 @@ const add = (d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
 const diff = (a,b)=>Math.round((pd(fd(b))-pd(fd(a)))/864e5);
 const today = ()=>pd(fd(new Date()));
 const frd = (d,o={day:'numeric',month:'short'})=>d.toLocaleDateString('fr-FR',o);
-function ageAt(d){
-  const b=pd(S.settings.birth); if(!b) return null;
-  let m=(d.getFullYear()-b.getFullYear())*12+(d.getMonth()-b.getMonth());
-  if(d.getDate()<b.getDate()) m--;
-  const anchor=new Date(b.getFullYear(),b.getMonth()+m,b.getDate());
-  const days=diff(anchor,d);
-  return {m,w:Math.floor(days/7),days};
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const fname = id => FMAP[id]?FMAP[id].n:String(id).replace(/^autre:/,'');
+// clé de comparaison : sans accents, parenthèses ni pluriel (« petit pois » = « Petits pois »)
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const cle = s => norm(String(s).replace(/\(.*?\)/g,'')).split(/[^a-z0-9]+/).filter(Boolean).map(w=>w.length>3?w.replace(/[sx]$/,''):w).join(' ');
+function trouver(nom){
+  const k=cle(nom); if(!k) return null;
+  return FOODS.find(f=>cle(f.n)===k || f.n.split('/').some(p=>cle(p)===k)) || null;
 }
-const ageTxt = a => a? `${a.m} mois${a.w?` ${a.w} sem.`:''}` : '';
-const monthOf = d=>d.getMonth()+1;
-const inSeason = (f,d)=>!f.s.length || f.s.includes(monthOf(d));
-const fname = id => FMAP[id]?FMAP[id].n:id;
+
+/* ================= ALIMENTS HORS LISTE ================= */
+// Pas de liste à part : ils se déduisent du journal (food = 'autre:<nom>', cat = catégorie choisie).
+// Un aliment hors liste qui correspond à un aliment de la liste y est rattaché.
+function customFood(id,n,c){
+  const cat = (S.settings.cats||{})[id] || (CATS[c]&&c!=='alg'?c:'aut');
+  if(FMAP[id]){ FMAP[id].c=cat; return FMAP[id]; }
+  const f={id,n,c:cat,s:[],tip:'',custom:true};
+  FOODS.push(f); FMAP[id]=f; return f;
+}
+function normEntry(e){
+  if(!String(e.food).startsWith('autre:')) return e;
+  const hit=trouver(e.foodName||e.food.slice(6));
+  if(hit) return {...e,food:hit.id};
+  customFood(e.food,e.foodName||e.food.slice(6),e.cat);
+  return e;
+}
 
 /* ================= ÉTAT & STOCKAGE ================= */
-const DEF = {name:'Pedro',birth:'2026-07-05',start:'2026-11-09',pauses:[],extra:{},removed:{},pedia:false,ready:{}};
-const S = {entries:[],settings:{...DEF},mode:'loading'};
+const DEF = {name:'Pedro',birth:'2026-07-05',start:'2026-11-09',pauses:[],extra:{},removed:{},swaps:{},cats:{}};
+const S = {entries:[],settings:{...DEF}};
 let DB=null;
 const LS = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-function setSync(t,cls){const el=document.getElementById('sync');el.textContent=t;el.className='sync '+(cls||'');}
 
 async function initStore(){
   render();
-  let timer=setTimeout(()=>setSync('Hors ligne','ko'),10000);
   let db=null;
   try{ if(window.claude && window.claude.use) db = await window.claude.use('db'); }catch(e){ db=null; }
   if(!db){
-    clearTimeout(timer); S.mode='local';
-    S.entries=LS.get('div_entries',[]); S.settings={...DEF,...LS.get('div_settings',{})};
-    setSync('Sur cet appareil','ok'); render(); return;
+    S.entries=LS.get('div_entries',[]).map(normEntry); S.settings={...DEF,...LS.get('div_settings',{})};
+    render(); return;
   }
-  DB=db; S.mode='db';
+  DB=db;
   DB.collection('log').onSnapshot(snap=>{
-    S.entries=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!snap.metadata.fromCache){clearTimeout(timer); setSync('Synchronisé','ok');}
+    S.entries=snap.docs.map(d=>normEntry({id:d.id,...d.data()}));
     render();
-  }, e=>{clearTimeout(timer); setSync('Synchro en panne','ko');});
+  }, ()=>alertBox('Synchronisation impossible. Vérifiez la connexion.'));
   DB.doc('settings/baby').onSnapshot(s=>{
     if(s.exists) S.settings={...DEF,...s.data()};
     render();
-  }, e=>{});
+  }, ()=>{});
 }
 async function addEntries(list){
   const ids=[];
   try{
     if(DB){ for(const e of list){ const r=await DB.collection('log').add(e); ids.push(r.id); } }
-    else { for(const e of list){ const id='l'+Date.now()+Math.random().toString(36).slice(2,6); ids.push(id); S.entries.push({id,...e}); } LS.set('div_entries',S.entries); render(); }
-  }catch(err){ alertBox('Impossible d\'enregistrer ('+(err&&err.code||'erreur')+'). Réessayez.'); }
+    else { for(const e of list){ const id='l'+Date.now()+Math.random().toString(36).slice(2,6); ids.push(id); S.entries.push(normEntry({id,...e})); } LS.set('div_entries',S.entries); render(); }
+  }catch(err){ alertBox('Impossible d\'enregistrer. Réessayez.'); }
   return ids;
 }
 let toastTimer=null;
@@ -276,12 +222,6 @@ function toastUndo(ids,msg){
   el.innerHTML=`<span>${esc(msg)}</span><button type="button" class="btn sm">Annuler</button>`;
   el.querySelector('button').onclick=async()=>{ el.remove(); for(const id of ids){ await delEntry(id); } };
   document.body.appendChild(el); toastTimer=setTimeout(()=>el.remove(),7000);
-}
-async function quickLog(id,avis,date){
-  const who=(LS.get('div_who','')||'').slice(0,40);
-  const e={date:date||fd(today()),avis,signal:'',qty:'',mode:'cuillere',shared:false,reac:'aucune',note:'',who,ts:new Date().toISOString(),food:id,foodName:fname(id)};
-  const ids=await addEntries([e]);
-  toastUndo(ids,`${fname(id)} noté ${AVIS[avis].e}`);
 }
 async function delEntry(id){
   try{
@@ -297,306 +237,341 @@ function saveSettings(patch){
 }
 function alertBox(msg){ const el=document.createElement('div'); el.className='warn alertbox'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),4000); }
 
-/* ================= CALCULS ================= */
+/* ================= ÉTAT DES ALIMENTS ================= */
+function entriesOf(id){ return S.entries.filter(e=>e.food===id).sort((a,b)=>(a.date+(a.ts||'')).localeCompare(b.date+(b.ts||''))); }
+function groupStat(g){
+  const es=S.entries.filter(e=>(FMAP[e.food]||{}).alg===g);
+  const ok=es.filter(e=>!estRx(e)).length;
+  const dates=es.map(e=>e.date).sort();
+  return {n:es.length, ok, rx:es.length-ok, first:dates[0]||null, es};
+}
+// etat : gout (goûté sans réaction ; allergène = 3 prises), cours (allergène en cours, refusé, réaction), todo
+// tag  : nuance pour la couleur du point — gout, alg, ref, rx, todo
+function stat(id){
+  const es=entriesOf(id); const f=FMAP[id]||{};
+  const n=es.length, aime=es.filter(e=>e.avis==='aime').length, bof=es.filter(e=>e.avis==='bof').length, refus=es.filter(e=>e.avis==='refuse').length;
+  const last=es[n-1]||null, lastRef=[...es].reverse().find(e=>e.avis==='refuse')||null;
+  const gs=f.alg?groupStat(f.alg):null;
+  let etat='todo', tag='todo';
+  if(es.some(estRx) || (gs&&gs.rx)){ etat='cours'; tag='rx'; }
+  else if(gs && gs.ok>=3){ etat='gout'; tag='gout'; }
+  else if(gs && gs.ok){ etat='cours'; tag='alg'; }
+  else if(n && aime+bof){ etat='gout'; tag='gout'; }
+  else if(n){ etat='cours'; tag='ref'; }
+  return {n,aime,refus,last,lastRef,etat,tag,ok:gs?gs.ok:n};
+}
+const avisEmoji = s => s.last ? (AVIS[s.last.avis]||{e:''}).e : '';
+
+/* ================= PROGRAMME ================= */
 function schedule(){
   const st=pd(S.settings.start)||today(); const pauses=S.settings.pauses||[];
   const out=[]; let d=st;
   PLAN.forEach((p,i)=>{
-    const np=pauses.filter(x=>x===i).length;
-    for(let k=0;k<np;k++){ out.push({pause:true,i,start:d}); d=add(d,7); }
+    for(let k=0;k<pauses.filter(x=>x===i).length;k++){ out.push({pause:true,i,start:d}); d=add(d,7); }
     out.push({i,start:d}); d=add(d,7);
   });
   out.push({after:true,start:d});
   return out;
 }
-function currentSlot(sch){
-  const t=today();
-  if(t<sch[0].start) return {k:-1,s:null}; // avant démarrage
-  for(let k=0;k<sch.length;k++){ const s=sch[k]; if(s.after) return {k,s}; if(t>=s.start && t<add(s.start,7)) return {k,s}; }
-  return {k:-1,s:null}; // avant démarrage
+function slotAt(sch,date){
+  if(date<sch[0].start) return null;
+  for(const s of sch){ if(s.after || date<add(s.start,7)) return s; }
+  return null;
 }
 function weekFoods(i){
   const base=PLAN[i].news.filter(id=>!((S.settings.removed||{})[i]||[]).includes(id));
   const ex=((S.settings.extra||{})[i]||[]).filter(id=>!base.includes(id));
   return base.concat(ex);
 }
-function entriesOf(id){ return S.entries.filter(e=>e.food===id).sort((a,b)=>(a.date+(a.ts||'')).localeCompare(b.date+(b.ts||''))); }
-function stat(id){
-  const es=entriesOf(id); const f=FMAP[id]||{};
-  const n=es.length, aime=es.filter(e=>e.avis==='aime').length, refus=es.filter(e=>e.avis==='refuse').length;
-  const rx=es.filter(e=>e.reac==='surveiller'||e.reac==='serieuse');
-  const ok=es.filter(e=>e.reac!=='surveiller'&&e.reac!=='serieuse').length;
-  const last=n?es[n-1].date:null, first=n?es[0].date:null;
-  const lastAime=[...es].reverse().find(e=>e.avis==='aime');
-  const lastRef=[...es].reverse().find(e=>e.avis==='refuse');
-  let st='todo', label='À tester', cls='';
-  if(rx.length){ st='rx'; label= rx.some(e=>e.reac==='serieuse')?'Réaction : en parler au médecin':'Réaction à surveiller'; cls='rx'; }
-  else if(f.alg && ok>=3){ st='done'; label='Toléré ✓ ('+ok+' prises)'; cls='done'; }
-  else if(!f.alg && aime>=2){ st='done'; label='Acquis ✓'; cls='done'; }
-  else if(n && lastRef && (!lastAime || lastRef.date>=lastAime.date) && refus>=1 && aime===0){ st='ref'; label='Refusé '+refus+'/10 · on repropose'; cls='ref'; }
-  else if(n){ st='disc'; cls='disc'; label= f.alg? 'En introduction ('+ok+'/3)' : 'En découverte ('+n+' fois)'; }
-  return {n,aime,refus,ok,last,first,st,label,cls,lastRef};
-}
-function groupStat(g){
-  const es=S.entries.filter(e=>(FMAP[e.food]||{}).alg===g);
-  const ok=es.filter(e=>e.reac!=='surveiller'&&e.reac!=='serieuse');
-  const rx=es.length-ok.length;
-  const dates=es.map(e=>e.date).sort();
-  return {n:es.length, ok:ok.length, rx, first:dates[0]||null, last:dates[dates.length-1]||null, es};
-}
-
-/* ================= RENDU ================= */
-let TAB = (location.hash||'#aujourdhui').slice(1);
-function render(){
-  if(!['aujourdhui','planning','aliments'].includes(TAB)) TAB='aujourdhui';
-  syncCustom();
-  document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===TAB));
-  const a=ageAt(today());
-  const nm=esc(S.settings.name||'Pedro');
-  document.getElementById('title').textContent = S.settings.name? `Diversification de ${S.settings.name}` : 'Diversification';
-  const st=pd(S.settings.start); const t=today();
-  let extra='';
-  if(st){ const d=diff(st,t); extra = d<0 ? ` · démarrage dans ${-d} jour${-d>1?'s':''} (${frd(st,{weekday:'long',day:'numeric',month:'long'})})` : ` · jour ${d+1} de diversification`; }
-  document.getElementById('agebar').innerHTML = `${a?`${nm} a <b>${ageTxt(a)}</b>`:''}${extra}`;
-  const v=document.getElementById('view');
-  v.innerHTML = TAB==='aujourdhui'?vToday(): TAB==='planning'?vPlanning(): vFoods();
-}
-
-function foodCard(id,opts={}){
-  const f=FMAP[id]; if(!f) return '';
-  const s=stat(id);
-  const sea='';
-  return `<button class="food ${s.cls}" data-log="${id}"><span class="row between"><span class="nm">${esc(f.n)}</span>${f.alg?'<span class="pill butter">allergène</span>':''}</span><span class="st">${esc(s.label)}${s.last?` · dernière fois ${frd(pd(s.last))}`:''}</span>${opts.tip?`<span class="note">${esc(f.tip)}</span>`:''}${(()=>{const r=s.st!=='rx'&&!f.alg?nextRepriseTxt(id):'';return r?`<span class="note">↻ Prochaine ${esc(r)}</span>`:'';})()}${sea}</button>`;
-}
-
-function algBlock(protoKey, weekStart){
-  const p=PROTO[protoKey]; const f=FMAP[protoKey]; const g=f.alg; const gs=groupStat(g);
-  const es=gs.es.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const dots=[0,1,2].map(k=>{const e=es[k]; const c=!e?'':(e.reac==='surveiller'||e.reac==='serieuse')?'rx':'ok'; return `<span class="dot ${c}">${e?'✓':k+1}</span>`;}).join('');
-  // règle des 3 jours
-  let gap='';
-  const otherFirsts=Object.keys(ALG).filter(x=>x!==g).map(x=>groupStat(x).first).filter(Boolean).sort();
-  const lastOther=otherFirsts[otherFirsts.length-1];
-  if(!gs.n && lastOther){ const dd=diff(pd(lastOther),today()); if(dd<3) gap=`<div class="info" style="margin-top:8px">Un autre allergène a été introduit il y a ${dd} jour${dd>1?'s':''}. Attendez encore ${3-dd} jour${3-dd>1?'s':''} avant celui-ci.</div>`; }
-  const rx = gs.rx? `<div class="warn">Une réaction a été notée. Ne reproposez pas cet aliment avant d'en avoir parlé au médecin.</div>`:'';
-  return `<div class="alg">
-    <div class="row between"><b>Allergène : ${esc(f.n)}</b><span class="pill ${ALG[g].tier===1?'peach':''}">${ALG[g].tier===1?'prioritaire':'secondaire'}</span></div>
-    <div class="row" style="margin-top:8px"><div class="steps">${dots}</div><span class="note">${gs.ok>=3?'Toléré ✓':gs.ok+'/3 prises'}</span></div>
-    <details style="margin-top:6px"><summary class="note" style="cursor:pointer">Préparation et suite</summary>
-    <div class="note" style="margin-top:4px">${esc(p.how)}</div>
-    <div class="note" style="margin-top:4px">Les 3 prises sont dans le programme : le matin ou le midi, à la maison, Pedro en forme. Observez-le 2 h. Toléré après 3 prises sans réaction.</div>
-    <div class="note" style="margin-top:4px"><b>Ensuite</b> : ${esc(p.keep)}</div></details>
-    ${gap}${rx}
-  </div>`;
-}
-
-/* ===== Reprises planifiées & programme jour par jour ===== */
-// Règle : semaine d'intro = 2 fois ; S+1 et S+2 = 1 fois ; puis 1 fois toutes les 2 semaines (S+4, S+6…)
-const REP_RULE = k => (k===1||k===2) ? 1 : (k>=4 && k%2===0) ? 1 : 0;
-const ENT_FOOD = {lait:'yaourt',oeuf:'oeuf',ble:'semoule',arachide:'arachide',poisson:'poisson',amande:'amande'};
-const DAYS_BY_WEEK = i => i<=1 ? [0,2,4,6] : i<=3 ? [0,1,3,4,6] : [0,1,2,3,4,5,6];
-const ALG_DAYS = n => n===4?[1,2,3]: n===5?[2,3,4]:[1,3,5];
 function introWeek(id){ for(let i=0;i<PLAN.length;i++){ if(weekFoods(i).includes(id) || PLAN[i].alg===id) return i; } return -1; }
-function weekTargets(i){
-  const out=[];
-  weekFoods(i).forEach(id=>out.push({id,n:2,kind:'new'}));
-  if(PLAN[i].alg) out.push({id:PLAN[i].alg,n:3,kind:'alg'});
-  for(let j=0;j<i;j++){
-    const k=i-j;
-    weekFoods(j).forEach(id=>{ if(stat(id).st==='rx') return; const n=REP_RULE(k); if(n) out.push({id,n,kind:'rep',from:j}); });
-    const a=PLAN[j].alg;
-    if(a){ const g=FMAP[a].alg; if(groupStat(g).rx) continue; out.push({id:ENT_FOOD[g]||a,n:ALG[g].target,kind:'ent',g}); }
+const DAYS_BY_WEEK = i => i<=1 ? [0,2,4,6] : i<=3 ? [0,1,3,4,6] : [0,1,2,3,4,5,6];
+// reprises : semaine d'intro + 1 et + 2 = 1 fois, puis 1 fois toutes les 2 semaines
+const REP_RULE = k => (k===1||k===2) ? 1 : (k>=4 && k%2===0) ? 1 : 0;
+const slotKey = id => { const g=(FMAP[id]||{}).alg; return g?'g:'+g:'f:'+id; };
+const matchKey = (e,k) => k.startsWith('g:') ? (FMAP[e.food]||{}).alg===k.slice(2) : e.food===k.slice(2);
+const countIn = (k,from,to) => S.entries.filter(e=>matchKey(e,k) && e.date>=fd(from) && e.date<fd(to)).length;
+
+// Objectifs d'une semaine. Les nouveautés et reprises se comptent dans la semaine ;
+// l'allergène en cours se compte en prises restantes (3 au total), un seul à la fois.
+function cibles(slot){
+  const out=[]; const vu=new Set();
+  const push=(id,n,kind,x={})=>{ const k=slotKey(id); if(vu.has(k)||!n) return; vu.add(k); out.push({id,k,n,kind,...x}); };
+  const i=slot.after?PLAN.length-1:slot.i;
+  if(!slot.pause && !slot.after){
+    for(let j=0;j<=i;j++){ const a=PLAN[j].alg; if(!a) continue; const gs=groupStat(FMAP[a].alg); if(gs.rx||gs.ok>=3) continue; push(a,3-gs.ok,'alg',{net:true,deja:gs.ok}); break; }
+    weekFoods(i).forEach(id=>{ if(stat(id).tag!=='rx') push(id,2,'new'); });
+    for(let j=0;j<i;j++) weekFoods(j).forEach(id=>{ if(!stat(id).n) push(id,2,'new'); });
+  }
+  FOODS.forEach(f=>{ const s=stat(f.id); if(s.tag==='ref' && s.refus<10) push(f.id,1,'retry',{des:fd(add(pd(s.lastRef.date),2))}); });
+  Object.keys(ALG).forEach(g=>{ const gs=groupStat(g); if(gs.rx||gs.ok<3) return; push(ENT_FOOD[g]||FOODS.find(f=>f.alg===g).id, ALG[g].target,'ent'); });
+  if(slot.pause || slot.after){
+    FOODS.filter(f=>!f.alg && stat(f.id).etat==='gout').sort((a,b)=>stat(b.id).aime-stat(a.id).aime).slice(0,4).forEach(f=>push(f.id,1,'rep'));
+  } else {
+    for(let j=0;j<i;j++){ const n=REP_RULE(i-j); weekFoods(j).forEach(id=>{ if(stat(id).etat==='gout') push(id,n,'rep'); }); }
   }
   return out;
 }
-function dayPlan(i, ws){
-  const avail=DAYS_BY_WEEK(i); const days=[0,1,2,3,4,5,6].map(d=>({d,on:avail.includes(d),items:[]}));
-  const T=weekTargets(i);
-  const algD=ALG_DAYS(avail.length).map(k=>avail[k]);
+
+// Répartit ce qui reste à faire sur les jours restants de la semaine, à partir de `from`.
+// Règles : un nouvel aliment par jour ; prise d'allergène seule nouveauté du jour, un jour sur deux si possible,
+// 3 jours après la 1re prise d'un autre allergène ; pas la même reprise deux jours de suite ; 3 aliments max par jour.
+// Ce qui a été noté compte, même hors programme ; ce qui manque glisse au jour suivant.
+function planSemaine(slot, from){
+  const ws=slot.start, we=add(ws,7), td=fd(today());
+  const avail = slot.i!==undefined && !slot.pause && !slot.after ? DAYS_BY_WEEK(slot.i) : [0,1,2,3,4,5,6];
+  const swaps=S.settings.swaps||{};
+  const T=cibles(slot);
+  const jours=[];
+  for(let d=0;d<7;d++){
+    const date=add(ws,d); if(date<from) continue; const ds=fd(date);
+    const faits=S.entries.filter(e=>e.date===ds);
+    jours.push({date,ds,d,on:avail.includes(d)||faits.length>0,faits,items:[],sw:swaps[ds]||{skip:[],add:[]}});
+  }
+  T.forEach(t=>{ t.reste = t.net ? t.n : Math.max(0, t.n - countIn(t.k,ws,we)); });
+  const nouveau = id => !stat(id).n;
+  const nb = j => j.items.length + new Set(j.faits.map(e=>e.food)).size;
+  const peut = (j,t) => j.on && nb(j)<3 && !j.items.some(it=>it.k===t.k) && !j.faits.some(e=>matchKey(e,t.k))
+    && !j.sw.skip.includes(t.id) && (!t.des || j.ds>=t.des);
+  const premiere = j => j.items.some(it=>it.first) || j.faits.some(e=>entriesOf(e.food)[0]?.id===e.id && !(FMAP[e.food]||{}).alg);
+  const algDuJour = j => j.items.some(it=>it.kind==='alg') || j.faits.some(e=>(FMAP[e.food]||{}).alg && groupStat(FMAP[e.food].alg).ok<=3);
+  const poser = (j,t,x={}) => { j.items.push({id:t.id,k:t.k,kind:t.kind,...x}); t.reste--; };
+  // 1) ajouts manuels (« Remplacer »)
+  jours.forEach(j=>j.sw.add.forEach(id=>{
+    const k=slotKey(id); if(j.faits.some(e=>matchKey(e,k)) || j.items.some(it=>it.k===k)) return;
+    const t=T.find(t=>t.k===k);
+    j.items.push({id,k,kind:t?t.kind:'rep',manuel:true,first:nouveau(id),prise:t?.deja??0}); if(t) t.reste--;
+  }));
+  // 2) allergène en cours d'introduction
   const alg=T.find(t=>t.kind==='alg');
-  if(alg){ algD.forEach((d,k)=>days[d].items.push({id:alg.id,kind:'alg',k})); }
-  // premières découvertes : jours libres d'allergène, au plus tôt
-  const news=T.filter(t=>t.kind==='new');
-  let free=avail.filter(d=>!(alg&&algD[0]===d));
-  news.forEach((t,k)=>{ const d=free[k % free.length]; days[d].items.push({id:t.id,kind:'new',first:true}); });
-  const placedDays=id=>days.filter(x=>x.items.some(it=>it.id===id)).map(x=>x.d);
-  const place=(t,kind)=>{
-    const cand=days.filter(x=>x.on && !x.items.some(it=>it.id===t.id));
-    if(!cand.length) return;
-    const pd_=placedDays(t.id);
-    cand.sort((a,b)=>{
-      const sc=x=>x.items.length*3 + (x.items.some(it=>it.first)?3:0) + (x.items.some(it=>it.kind==='alg'&&it.k===0)?2:0) - (pd_.length?Math.min(3,...pd_.map(p=>Math.abs(p-x.d))):0)*2 + x.d*0.01;
-      return sc(a)-sc(b);
-    });
-    cand[0].items.push({id:t.id,kind,g:t.g});
-  };
-  news.forEach(t=>{ for(let c=1;c<t.n;c++) place(t,'new'); });
-  T.filter(t=>t.kind==='ent').forEach(t=>{ for(let c=0;c<t.n;c++) place(t,'ent'); });
-  T.filter(t=>t.kind==='rep').forEach(t=>{ for(let c=0;c<t.n;c++) place(t,'rep'); });
-  return days.map(x=>({...x,date:add(ws,x.d)}));
-}
-function slotKey(it){ if(it.kind==='ent') return 'g:'+it.g; if(it.kind==='alg') return 'g:'+FMAP[it.id].alg; return 'f:'+it.id; }
-function weekStatus(i, ws){
-  const dp=dayPlan(i,ws); const we=add(ws,7);
-  const inWeek=S.entries.filter(e=>{const d=pd(e.date);return d>=ws&&d<we;});
-  const groups={};
-  dp.forEach(x=>x.items.forEach(it=>{ const k=slotKey(it); (groups[k]=groups[k]||[]).push({it,x}); }));
-  Object.entries(groups).forEach(([k,slots])=>{
-    const es = (k.startsWith('g:') ? inWeek.filter(e=>(FMAP[e.food]||{}).alg===k.slice(2)) : inWeek.filter(e=>e.food===k.slice(2))).map(e=>e.date).sort();
-    slots.sort((a,b)=>a.x.d-b.x.d);
-    if(slots[0].it.kind==='alg'){ slots.forEach((sl,idx)=>{ sl.it.done = idx<es.length; }); return; }
-    const used=es.map(()=>false);
-    // 1) même jour  2) rattrapage : un repas noté plus tard couvre le créneau manqué le plus ancien  3) le reste
-    slots.forEach(sl=>{ const j=es.findIndex((d,ix)=>!used[ix]&&d===fd(sl.x.date)); if(j>-1){used[j]=true; sl.it.done=true;} else sl.it.done=false; });
-    slots.forEach(sl=>{ if(sl.it.done) return; const j=es.findIndex((d,ix)=>!used[ix]&&d>fd(sl.x.date)); if(j>-1){used[j]=true; sl.it.done=true;} });
-    slots.forEach(sl=>{ if(sl.it.done) return; const j=used.findIndex(u=>!u); if(j>-1){used[j]=true; sl.it.done=true;} });
+  if(alg && alg.reste>0){
+    const g=FMAP[alg.id].alg; let min='';
+    if(!groupStat(g).n){ const f=Object.keys(ALG).filter(x=>x!==g).map(x=>groupStat(x).first).filter(Boolean).sort().pop(); if(f) min=fd(add(pd(f),3)); }
+    const cand=jours.filter(j=>peut(j,alg) && j.ds>=min && !premiere(j));
+    let last=-9; const pris=[];
+    cand.forEach(j=>{ if(alg.reste>pris.length && j.d-last>=2){ pris.push(j); last=j.d; } });
+    cand.forEach(j=>{ if(alg.reste>pris.length && !pris.includes(j)) pris.push(j); });
+    pris.sort((a,b)=>a.d-b.d).forEach((j,ix)=>poser(j,alg,{prise:alg.deja+ix}));
+  }
+  // 3) nouveautés : première fois seule dans la journée (ni autre nouveauté ni allergène), 2e fois au plus tôt après
+  T.filter(t=>t.kind==='new' && t.reste>0).forEach(t=>{
+    const pose=jours.find(j=>j.items.some(it=>it.k===t.k));
+    let apres=pose?pose.ds:'';
+    if(nouveau(t.id) && !pose){
+      const j=jours.find(j=>peut(j,t) && !premiere(j) && !algDuJour(j));
+      if(!j) return; poser(j,t,{first:true}); apres=j.ds;
+    }
+    while(t.reste>0){ const j=jours.find(j=>j.ds>apres && peut(j,t)); if(!j) break; poser(j,t); apres=j.ds; }
   });
-  return dp;
+  // 4) entretien, refus à retenter, reprises : jour le moins chargé, pas deux jours de suite
+  ['ent','retry','rep'].forEach(kind=>T.filter(t=>t.kind===kind).forEach(t=>{
+    while(t.reste>0){
+      const cand=jours.filter(j=>peut(j,t)); if(!cand.length) break;
+      const voisin=j=>jours.some(x=>Math.abs(x.d-j.d)===1 && (x.items.some(it=>it.k===t.k)||x.faits.some(e=>matchKey(e,t.k))));
+      cand.sort((a,b)=>(nb(a)*10+(voisin(a)?15:0)+a.d)-(nb(b)*10+(voisin(b)?15:0)+b.d));
+      poser(cand[0],t);
+    }
+  }));
+  jours.forEach(j=>{ j.today=j.ds===td; });
+  return jours;
 }
-function eatenOn(id,date,g){
-  const ds=fd(date);
-  return S.entries.some(e=>e.date===ds && (e.food===id || (g && (FMAP[e.food]||{}).alg===g)));
+// Les 7 prochains jours (à partir du début du programme s'il n'a pas commencé)
+function prochainsJours(){
+  const sch=schedule(); const t=today(); const from = t<sch[0].start ? sch[0].start : t;
+  const cache=new Map(); const out=[];
+  for(let k=0;k<7;k++){
+    const date=add(from,k); const slot=slotAt(sch,date);
+    if(!cache.has(slot)) cache.set(slot, planSemaine(slot, slot.start<from?from:slot.start));
+    const j=cache.get(slot).find(x=>x.ds===fd(date));
+    if(j) out.push({...j,slot});
+  }
+  return out;
 }
-function nextRepriseTxt(id){
-  const iw=introWeek(id); if(iw<0) return '';
-  const sch=schedule(); const slot=currentSlot(sch); const cur=slot.k===-1?-1:(slot.s.after?PLAN.length:slot.s.i);
-  for(let j=Math.max(cur+1,iw+1);j<PLAN.length;j++){ if(REP_RULE(j-iw)){ const s=sch.find(x=>!x.pause&&!x.after&&x.i===j); return `reprise sem. ${j+1} (${frd(s.start)})`; } }
-  return '';
-}
-function dayPlanHtml(i, ws){
-  const dp=weekStatus(i,ws); const t=today();
-  const label=(it)=>{
-    const n=esc(fname(it.id));
-    if(it.kind==='alg') return `<b>${n}</b> <span class="pill butter">allergène · prise ${it.k+1}</span> <span class="note">${esc(PROTO[it.id].steps[it.k])}, le matin ou le midi</span>`;
-    if(it.kind==='new') return `<b>${n}</b> <span class="pill sage">${it.first?'nouveau':'2e fois'}</span>`;
-    if(it.kind==='ent') return `${n} <span class="pill peach">entretien ${esc(ALG[it.g].n.toLowerCase())}</span>`;
-    return `${n} <span class="pill">reprise</span>`;
-  };
-  const rows=dp.map(x=>{
-    const dn=frd(x.date,{weekday:'short',day:'numeric'});
-    const isT=fd(x.date)===fd(t);
-    if(!x.on || !x.items.length) return `<div class="maint" style="opacity:.6"><span class="dayname">${esc(dn)}</span><span class="note" style="flex:1">Pas de purée : lait seulement</span></div>`;
-    return `<div class="maint${isT?' today':''}"><span class="dayname" style="font-weight:${isT?600:400}">${esc(dn)}${isT?'<br><span class="note">aujourd\'hui</span>':''}</span><span class="items">${x.items.map(it=>{const ok=it.done;return `<span data-log="${it.id}" data-date="${fd(x.date)}">${ok?'✅':'◻️'} ${label(it)}</span>`;}).join('')}</span></div>`;
-  }).join('');
-  return `<div style="margin-top:14px"><b>Programme de la semaine</b>
-    <div style="margin-top:6px">${rows}</div>
-  </div>`;
-}
-
-function weekDetail(i, ws, isCurrent){
-  const p=PLAN[i]; const we=add(ws,6);
-  const a1=ageAt(ws);
-  const foods=weekFoods(i);
-  return `
-   <div class="kicker">${frd(ws)} → ${frd(we)}${a1?` · ${ageTxt(a1)}`:''}</div><h2>${esc(p.t)}</h2>
-   <div class="grid2" style="margin-top:10px">
-     <div class="ok"><b>Rythme</b><br>${esc(p.rythme)}</div>
-     <div class="info"><b>Quantités (repères maximum)</b><br>${esc(p.qte)}</div>
-   </div>
-   ${dayPlanHtml(i,ws)}
-   <div style="margin-top:16px"><b>Les nouveautés</b></div>
-   <ul class="tight">${foods.map(id=>{const s=stat(id);return `<li><b>${esc(fname(id))}</b> <span class="note">— ${esc(FMAP[id].tip)}${s.n?` · <i>${esc(s.label)}</i>`:''}</span></li>`;}).join('')}${p.tips.map(t=>`<li class="note">${esc(t)}</li>`).join('')}</ul>
-   ${p.alg?algBlock(p.alg,ws):''}
-   <details class="card soft" style="margin-top:14px;margin-bottom:0;padding:10px 12px"><summary style="cursor:pointer"><b>Bon à savoir cette semaine</b> <span class="note">(${p.know.length})</span></summary><ul class="tight">${p.know.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>`;
-}
-
-
 function observing(){
   const now=Date.now(); const out=[];
   Object.keys(ALG).forEach(g=>{
-    const es=groupStat(g).es.slice().sort((a,b)=>(a.date+(a.ts||'')).localeCompare(b.date+(b.ts||'')));
-    es.slice(0,3).forEach(e=>{ if(!e.ts) return; const until=new Date(e.ts).getTime()+2*3600e3; if(until>now && e.date===fd(today())) out.push({e,until}); });
+    groupStat(g).es.slice().sort((a,b)=>(a.date+(a.ts||'')).localeCompare(b.date+(b.ts||''))).slice(0,3).forEach(e=>{
+      if(!e.ts) return; const until=new Date(e.ts).getTime()+2*3600e3;
+      if(until>now && e.date===fd(today())) out.push({e,until});
+    });
   });
   return out;
 }
-function todayItemRow(it, date, origin){
-  const f=FMAP[it.id]; const p=PLAN[0];
-  const pill = it.kind==='alg'?`<span class="pill butter">allergène · prise ${it.k+1}</span>`: it.kind==='new'?`<span class="pill sage">${it.first?'nouveau':'2e fois'}</span>`: it.kind==='ent'?`<span class="pill peach">entretien</span>`:`<span class="pill">reprise</span>`;
-  const hint = it.kind==='alg' ? PROTO[it.id].steps[it.k]+' · le matin ou le midi' : (f?f.tip:'');
-  const ds=fd(today());
-  const done = it.done;
-  let right;
-  if(done){
-    const e=S.entries.filter(x=>x.date===ds && (x.food===it.id || (it.kind==='ent'||it.kind==='alg') && (FMAP[x.food]||{}).alg===(it.g||FMAP[it.id].alg))).pop();
-    right=`<span class="note">✅ ${e?esc((AVIS[e.avis]||{e:''}).e)+(e.who?' '+esc(e.who):''):'fait'}</span>`;
-  } else {
-    right=`<span class="quick">${['aime','bof','refuse'].map(a=>`<button type="button" data-quick="${it.id}" data-avis="${a}" title="${AVIS[a].n}" aria-label="${AVIS[a].n}">${AVIS[a].e}</button>`).join('')}<button type="button" data-log="${it.id}" title="Plus de détails" aria-label="Plus de détails">⋯</button></span>`;
-  }
-  return `<div class="maint" style="align-items:flex-start"><span style="flex:1"><b>${esc(fname(it.id))}</b> ${pill}${origin?` <span class="note">· prévu ${esc(origin)}</span>`:''}<br><span class="note">${esc(hint)}</span></span>${right}</div>`;
+
+/* ================= RENDU ================= */
+const TABS=['semaine','aliments','progres'];
+let TAB=(location.hash||'').slice(1); if(!TABS.includes(TAB)) TAB='semaine';
+function render(){
+  FOODS.filter(f=>f.custom).forEach(f=>customFood(f.id,f.n,f.c));
+  document.querySelectorAll('#tabs a').forEach(a=>{ const on=a.dataset.t===TAB; a.classList.toggle('on',on); on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'); });
+  const v=document.getElementById('view');
+  v.innerHTML = TAB==='semaine'?vSemaine(): TAB==='aliments'?vAliments(): vProgres();
+  if(TAB==='aliments'){ const q=document.getElementById('fq'); if(q && FQ){ q.focus(); q.setSelectionRange(FQ.length,FQ.length); } }
 }
-function todayCard(sch,slot){
-  const t=today();
+const point = tag => `<span class="pt ${tag}" aria-hidden="true"></span>`;
+
+/* ---------- SEMAINE ---------- */
+function jourTitre(j){
+  const t=today(); const dd=diff(t,j.date);
+  return dd===0?'Aujourd\'hui': dd===1?'Demain': cap(frd(j.date,{weekday:'short',day:'numeric'}));
+}
+function ligneItem(it,j){
+  const s=stat(it.id); const nm=esc(fname(it.id));
+  let droite='';
+  if(it.kind==='alg') droite=`<span class="pill butter">allergène ${it.prise+1}/3</span>`;
+  else if(it.first) droite=`<span class="pill sage">nouveau</span>`;
+  else if(s.n) droite=`<span class="em">${avisEmoji(s)}</span>`;
+  const dose = it.kind==='alg' && PROTO[it.id] ? `<span class="note">${esc(PROTO[it.id][it.prise]||'')} · matin ou midi</span>` : '';
+  return `<div class="ligne"><button type="button" class="ligne-main" data-log="${esc(it.id)}" data-date="${j.ds}"><span class="nm">${nm}${dose?'<br>'+dose:''}</span>${droite}</button><button type="button" class="swap" data-swap="${esc(it.id)}" data-date="${j.ds}" aria-label="Remplacer ${nm}">⇄</button></div>`;
+}
+function ligneFait(e){
+  return `<div class="ligne fait"><span class="ok-ic" aria-hidden="true">✓</span><span class="nm">${esc(fname(e.food))}</span><span class="em">${(AVIS[e.avis]||{e:''}).e}</span></div>`;
+}
+function vSemaine(){
+  const jours=prochainsJours(); const sch=schedule();
   let html='';
-  const obs=observing();
-  obs.forEach(o=>{ const h=new Date(o.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-    html+=`<div class="warn" style="margin-bottom:10px"><b>👀 ${esc(fname(o.e.food))} : observez Pedro jusqu'à ${h}.</b><br>Plaques, gonflement des lèvres ou du visage, vomissements répétés → on arrête et on appelle le médecin. Gêne pour respirer, malaise, pâleur → 15.</div>`; });
-  const who=LS.get('div_who','');
-  const whoRow=`<div class="row" style="margin-top:10px;gap:6px"><span class="note">Qui note :</span><input type="text" id="whoQuick" value="${esc(who)}" placeholder="ton prénom" style="width:140px;padding:6px 9px;font-size:14px"></div>`;
-  if(slot.k===-1){
-    const first=weekStatus(0,sch[0].start).find(x=>x.items.length);
-    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><h2>On commence ${frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'})}</h2><p class="note" style="margin:6px 0 0">Au programme : ${first.items.map(it=>esc(fname(it.id))).join(', ')}, ${esc(PLAN[0].qte.toLowerCase())}</p>${whoRow}</div>`;
-  }
-  const s=slot.s;
-  if(s.after || s.pause){
-    return html+`<div class="card now"><div class="kicker">Aujourd'hui</div><p style="margin:4px 0">${s.pause?'Semaine de pause : proposez des aliments déjà connus.':'Les 8 semaines sont terminées : on adapte la suite ensemble.'}</p><button class="btn sm sec" data-log="">Noter un repas</button></div>`;
-  }
-  const dp=weekStatus(s.i,s.start);
-  const todayD=dp.find(x=>fd(x.date)===fd(t));
-  const missed=[]; dp.filter(x=>x.date<t).forEach(x=>x.items.forEach(it=>{ if(!it.done && it.kind!=='alg') missed.push({it,x}); }));
-  const items=(todayD?todayD.items:[]).filter(it=>it.kind!=='alg');
-  // allergène : une seule prise par jour, toujours la prochaine dans l'ordre
-  const algSlots=[]; dp.forEach(x=>x.items.forEach(it=>{ if(it.kind==='alg') algSlots.push({it,x}); }));
-  if(algSlots.length){
-    const g=FMAP[algSlots[0].it.id].alg; const gs=groupStat(g);
-    const doneToday=gs.es.find(e=>e.date===fd(t));
-    const next=algSlots.find(a=>!a.it.done);
-    if(doneToday){ const a=algSlots.filter(a=>a.it.done).pop(); if(a) items.unshift({...a.it,done:true}); }
-    else if(next && next.x.date<=t && !gs.rx) items.unshift({...next.it,k:algSlots.indexOf(next)});
-  }
-  let body='';
-  if(items.length) body+=items.map(it=>todayItemRow(it,t)).join('');
-  else body+=`<p class="note" style="margin:6px 0">Pas de purée prévue aujourd'hui : lait seulement.</p>`;
-  if(missed.length){
-    body+=`<div style="margin-top:12px"><b>À rattraper</b></div>`;
-    body+=missed.slice(0,4).map(m=>todayItemRow(m.it,t,frd(m.x.date,{weekday:'long'}))).join('');
-  }
-  const p=PLAN[s.i];
-  return html+`<div class="card now"><div class="row between"><div><div class="kicker">Aujourd'hui · ${esc(frd(t,{weekday:'long',day:'numeric',month:'long'}))}</div></div><span class="note">Sem. ${s.i+1}</span></div>
-    <div class="note" style="margin:4px 0 6px"><b>Quantité :</b> ${esc(p.qte)}</div>
-    ${body}
-        ${whoRow}</div>`;
-}
-
-
-
-/* ---------- AUJOURD'HUI ---------- */
-function vToday(){
-  const sch=schedule(); const slot=currentSlot(sch);
-  let html=todayCard(sch,slot);
-  const s = slot.k===-1 ? sch[0] : slot.s;
-  if(s.after){
-    html+=`<div class="card"><h2>La suite, à partir de 6 mois</h2><p class="note">On l'adaptera ensemble début janvier.</p><ul class="tight"><li>Allergènes restants : noisette, sésame, soja, cajou, noix, pistache, crevette (puis céleri, moutarde, mollusques).</li><li>Morceaux à attraper dès qu'il tient assis seul : bâtonnets de patate douce ou de carotte bien cuits, fleurette de brocoli, banane, bâtonnet d'omelette.</li><li>Petits morceaux fondants avant le 5 mars (8 mois).</li><li>Plat familial adapté : on prélève sa part avant de saler.</li></ul></div>`;
-  } else if(s.pause){
-    html+=`<div class="card"><h2>Semaine de pause</h2><p>Pas de nouveauté : on reprend les aliments connus et on entretient les allergènes. La semaine ${s.i+1} reprendra ensuite.</p><button class="btn sm sec" data-unpause="${s.i}">Annuler la pause</button></div>`;
-  } else {
-    html+=`<div class="card"><div class="row between"><span class="kicker">${slot.k===-1?'La première semaine':'Cette semaine'} · semaine ${s.i+1}</span></div>${weekDetail(s.i,s.start,slot.k!==-1)}</div>`;
-  }
-  html+=refus();
-  html+=recentLog();
+  observing().forEach(o=>{ const h=new Date(o.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    html+=`<div class="warn obs"><b>👀 ${esc(fname(o.e.food))} : observez Pedro jusqu'à ${h}</b><br>Plaques, gonflement, vomissements → médecin. Gêne pour respirer, malaise → 15.</div>`; });
+  if(today()<sch[0].start) html+=`<p class="note intro">On commence ${esc(frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'}))}.</p>`;
+  let lastSlot=null;
+  jours.forEach(j=>{
+    const faits=[...new Map(j.faits.map(e=>[e.food,e])).values()];
+    const qt = j.slot!==lastSlot && j.slot.i!==undefined && !j.slot.pause && !j.slot.after ? PLAN[j.slot.i].qt : '';
+    const sem = j.slot!==lastSlot && lastSlot ? (j.slot.pause?'Semaine de pause':j.slot.after?'Fin du programme':'Nouvelle semaine') : '';
+    lastSlot=j.slot;
+    const sw=(S.settings.swaps||{})[j.ds]; const modifie=sw && (sw.skip.length||sw.add.length);
+    const tete=`<div class="jour"><span>${esc(jourTitre(j))}${sem?` · ${esc(sem)}`:''}</span>${qt?`<span class="qt">${esc(qt)}</span>`:''}${modifie?`<button type="button" class="lien" data-reset="${j.ds}">Rétablir</button>`:''}</div>`;
+    if(!faits.length && !j.items.length){ html+=`<div class="jour vide"><span>${esc(jourTitre(j))}</span><span class="qt">lait seulement</span></div>`; return; }
+    html+=tete+`<div class="card liste">${faits.map(ligneFait).join('')}${j.items.map(it=>ligneItem(it,j)).join('')}</div>`;
+  });
+  html+=`<button type="button" class="card lien-card" id="openProg"><span>Le programme · 8 semaines</span><span aria-hidden="true">›</span></button>`;
   return html;
 }
 
-function recentLog(){
-  if(!S.entries.length) return '';
-  const list=S.entries.slice().sort((a,b)=>(b.date+(b.ts||'')).localeCompare(a.date+(a.ts||''))).slice(0,15);
-  return `<details class="card" style="padding:12px 16px"><summary style="cursor:pointer"><b>Derniers repas notés</b></summary>
-   ${list.map(e=>{const av=AVIS[e.avis]||{e:'•'}; const rx=REAC[e.reac];
-     const bits=[frd(pd(e.date),{weekday:'short',day:'numeric',month:'short'}),e.who?('par '+e.who):'',rx&&e.reac!=='aucune'?rx.n:'',e.note||''].filter(Boolean);
-     return `<div class="log"><span class="em">${av.e}</span><div style="flex:1"><b>${esc(e.foodName||fname(e.food))}</b><div class="meta">${bits.map(esc).join(' · ')}</div></div><button class="btn ghost sm" data-del="${esc(e.id)}" title="Supprimer">✕</button></div>`;}).join('')}
-  </details>`;
+/* ---------- ALIMENTS ---------- */
+let FF=null, FQ=''; // segment choisi ; par défaut le premier non vide parmi En cours, Goûtés, À tester
+function ligneAliment(f){
+  const s=stat(f.id); let droite='';
+  if(s.tag==='rx') droite='<span class="meta rx">réaction</span>';
+  else if(s.tag==='alg') droite=`<span class="meta">${s.ok}/3</span>`;
+  else if(s.tag==='ref') droite='<span class="meta">à retenter</span>';
+  else if(s.n) droite=`<span class="em">${avisEmoji(s)}</span>`;
+  return `<button type="button" class="ligne-main aliment" data-fiche="${esc(f.id)}">${point(s.tag)}<span class="nm">${esc(f.n)}</span>${droite}</button>`;
+}
+function vAliments(){
+  const nb={gout:0,cours:0,todo:0}; FOODS.forEach(f=>nb[stat(f.id).etat]++);
+  if(!FF) FF=['cours','gout','todo'].find(k=>nb[k]);
+  const q=cle(FQ);
+  let html=`<input type="search" id="fq" class="recherche" placeholder="Rechercher un aliment" value="${esc(FQ)}" autocomplete="off" enterkeyhint="search">`;
+  if(!q) html+=`<nav class="tabs seg">${[['gout','Goûtés'],['cours','En cours'],['todo','À tester']].map(([k,v])=>`<a href="#aliments" data-ff="${k}" class="${FF===k?'on':''}">${v} <span class="n">${nb[k]}</span></a>`).join('')}</nav>`;
+  const list = q ? FOODS.filter(f=>cle(f.n).includes(q)||norm(f.n).includes(norm(FQ))) : FOODS.filter(f=>stat(f.id).etat===FF);
+  if(!list.length) return html+`<p class="note vide-txt">${q?'Aucun aliment trouvé.':FF==='gout'?'Rien de goûté pour l\'instant.':FF==='cours'?'Rien en cours.':'Tout a été goûté.'}</p>`;
+  Object.entries(CATS).forEach(([c,cn])=>{
+    const l=list.filter(f=>f.c===c); if(!l.length) return;
+    html+=`<div class="jour"><span>${esc(cn)}</span></div><div class="card liste">${l.map(ligneAliment).join('')}</div>`;
+  });
+  return html;
 }
 
-/* ---------- PLANNING (2 mois, éditable) ---------- */
+/* ---------- PROGRÈS ---------- */
+function badges(){
+  const gout=FOODS.filter(f=>stat(f.id).etat==='gout');
+  const tol=Object.keys(ALG).filter(g=>groupStat(g).ok>=3 && !groupStat(g).rx);
+  const familles=['leg','fru','fec','pro'].filter(c=>gout.some(f=>f.c===c)).length;
+  const jours=S.entries.length? diff(pd(S.entries.map(e=>e.date).sort()[0]),today())+1 : 0;
+  const perseverance=FOODS.some(f=>{ const es=entriesOf(f.id); const r=es.findIndex(e=>e.avis==='refuse'); return r>-1 && es.slice(r+1).some(e=>e.avis==='aime'); });
+  return [
+    {e:'🥄',n:'Premier repas',ok:S.entries.length>0},
+    {e:'🖐️',n:'5 aliments goûtés',ok:gout.length>=5,p:`${Math.min(gout.length,5)}/5`},
+    {e:'🔟',n:'10 aliments goûtés',ok:gout.length>=10,p:`${Math.min(gout.length,10)}/10`},
+    {e:'🌈',n:'20 aliments goûtés',ok:gout.length>=20,p:`${Math.min(gout.length,20)}/20`},
+    {e:'🧺',n:'Légume, fruit, féculent et protéine',ok:familles>=4,p:`${familles}/4`},
+    {e:'🛡️',n:'Premier allergène toléré',ok:tol.length>=1},
+    {e:'🏅',n:'Lait, œuf et arachide tolérés',ok:PRIORITAIRES.every(g=>tol.includes(g)),p:`${PRIORITAIRES.filter(g=>tol.includes(g)).length}/3`},
+    {e:'💪',n:'Aimé après un refus',ok:perseverance},
+    {e:'📅',n:'Un mois de diversification',ok:jours>=30,p:`${Math.min(jours,30)}/30 j`},
+  ];
+}
+function vProgres(){
+  const nb={gout:0,cours:0,todo:0}; FOODS.forEach(f=>nb[stat(f.id).etat]++);
+  const tot=FOODS.length; const pct=k=>(100*nb[k]/tot).toFixed(1)+'%';
+  const lundi=add(today(),-((today().getDay()+6)%7));
+  const semaine=FOODS.filter(f=>{ const s=stat(f.id); return s.n && entriesOf(f.id)[0].date>=fd(lundi); }).length;
+  let html=`<div class="tuiles"><div class="card tuile"><b>${nb.gout}</b><span>goûtés</span></div><div class="card tuile"><b>+${semaine}</b><span>cette semaine</span></div></div>
+   <div class="card"><div class="jauge" role="img" aria-label="${nb.gout} goûtés, ${nb.cours} en cours, ${nb.todo} à tester"><span class="gout" style="width:${pct('gout')}"></span><span class="cours" style="width:${pct('cours')}"></span></div>
+   <div class="legende"><span>${point('gout')}${nb.gout} goûtés</span><span>${point('alg')}${nb.cours} en cours</span><span>${point('todo')}${nb.todo} à tester</span></div></div>`;
+  const algs=Object.keys(ALG).map(g=>({g,...groupStat(g)}));
+  html+=`<div class="jour"><span>Allergènes</span><span class="qt">${algs.filter(a=>a.ok>=3&&!a.rx).length}/${algs.length}</span></div><div class="card algs">${algs.map(a=>{
+    const tag=a.rx?'rx':a.ok>=3?'gout':a.n?'alg':'todo';
+    return `<span class="alg-chip ${tag}">${a.ok>=3&&!a.rx?'✓ ':''}${esc(ALG[a.g].n)}${tag==='alg'?` ${Math.min(a.ok,3)}/3`:''}</span>`;}).join('')}</div>`;
+  const bs=badges();
+  html+=`<div class="jour"><span>Badges</span><span class="qt">${bs.filter(b=>b.ok).length}/${bs.length}</span></div><div class="card liste">${bs.sort((a,b)=>b.ok-a.ok).map(b=>`<div class="ligne badge${b.ok?' ok':''}"><span class="be" aria-hidden="true">${b.e}</span><span class="nm">${esc(b.n)}</span>${b.ok?'<span class="ok-ic">✓</span>':`<span class="meta">${esc(b.p||'')}</span>`}</div>`).join('')}</div>`;
+  const pref=FOODS.filter(f=>stat(f.id).aime).sort((a,b)=>stat(b.id).aime-stat(a.id).aime).slice(0,3);
+  if(pref.length) html+=`<div class="jour"><span>Ses préférés</span></div><div class="card liste">${pref.map(f=>`<div class="ligne"><span class="em">😋</span><span class="nm">${esc(f.n)}</span><span class="meta">${stat(f.id).aime}×</span></div>`).join('')}</div>`;
+  const journal=S.entries.slice().sort((a,b)=>(b.date+(b.ts||'')).localeCompare(a.date+(a.ts||''))).slice(0,12);
+  if(journal.length) html+=`<div class="jour"><span>Derniers repas</span></div><div class="card liste">${journal.map(lignePrise).join('')}</div>`;
+  return html;
+}
+function lignePrise(e){
+  const meta=[cap(frd(pd(e.date),{weekday:'short',day:'numeric',month:'short'})),e.who,estRx(e)||e.reac==='legere'?REAC[e.reac].n:'',e.note].filter(Boolean).map(esc).join(' · ');
+  return `<div class="ligne"><span class="em">${(AVIS[e.avis]||{e:'•'}).e}</span><span class="nm">${esc(e.foodName||fname(e.food))}<br><span class="note">${meta}</span></span><button type="button" class="btn ghost sm del" data-del="${esc(e.id)}" aria-label="Supprimer">✕</button></div>`;
+}
+
+/* ================= FEUILLES ================= */
+const mbg=document.getElementById('mbg'), modal=document.getElementById('modal');
+function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; document.body.classList.remove('noscroll'); }
+function showModal(){ mbg.classList.add('show'); modal.scrollTop=0; document.body.classList.add('noscroll'); }
+const tete = t => `<div class="sheet-head"><h2>${esc(t)}</h2><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>`;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mbg.classList.contains('show')) closeModal(); });
+(function(){ let y0=null; mbg.addEventListener('touchstart',e=>{ y0=e.target.closest('.sheet-head')?e.touches[0].clientY:null; },{passive:true}); mbg.addEventListener('touchmove',e=>{ if(y0!=null && e.touches[0].clientY-y0>60){ y0=null; closeModal(); } },{passive:true}); })();
+mbg.addEventListener('click',e=>{ if(e.target===mbg) closeModal(); });
+
+/* ---------- Fiche aliment ---------- */
+let FICHE=null;
+function openFiche(id){ FICHE=id; drawFiche(); showModal(); }
+function drawFiche(){
+  const f=FMAP[FICHE]; if(!f){ closeModal(); return; }
+  const s=stat(f.id); const es=entriesOf(f.id).reverse();
+  const etat={gout:'Goûté',cours:s.tag==='rx'?'Réaction notée':s.tag==='alg'?`Allergène · ${s.ok}/3 prises`:'À retenter',todo:'À tester'}[s.etat];
+  const iw=introWeek(f.id);
+  modal.innerHTML=tete(f.n)+`
+   <p class="fiche-etat">${point(s.tag)}${esc(etat)}${iw>-1&&!s.n?` · prévu semaine ${iw+1}`:''}</p>
+   ${f.tip?`<p class="note">${esc(f.tip)}</p>`:''}
+   ${s.tag==='rx'?'<div class="warn">Ne reproposez pas cet aliment avant d\'en avoir parlé au médecin.</div>':''}
+   ${f.custom?`<div class="fld"><span class="lab">Catégorie</span><div class="filter">${Object.entries(CAT_COURT).map(([c,n])=>`<button type="button" class="chip ${f.c===c?'on g':''}" data-cat="${c}">${esc(n)}</button>`).join('')}</div></div>`:''}
+   ${es.length?`<div class="fld"><span class="lab">Repas</span><div class="liste">${es.map(lignePrise).join('')}</div></div>`:''}
+   <div class="sheet-foot"><button type="button" class="btn big" data-log="${esc(f.id)}">Noter un repas</button></div>`;
+}
+
+/* ---------- Remplacer un aliment prévu ---------- */
+let SWAP=null;
+function openSwap(id,ds){
+  SWAP={id,ds};
+  const prevus=new Set(prochainsJours().find(j=>j.ds===ds)?.items.map(it=>it.id)||[]);
+  const cand=FOODS.filter(f=>!prevus.has(f.id) && !f.alg && stat(f.id).etat==='gout');
+  const sem=(()=>{ const sl=slotAt(schedule(),pd(ds)); return sl&&sl.i!==undefined&&!sl.pause&&!sl.after?weekFoods(sl.i).filter(x=>!prevus.has(x)&&stat(x).etat!=='gout'):[]; })();
+  modal.innerHTML=tete(`Remplacer ${fname(id)}`)+`
+   <p class="note">${esc(cap(frd(pd(ds),{weekday:'long',day:'numeric',month:'long'})))}. Le reste de la semaine se recalcule.</p>
+   ${cand.length?`<div class="fld"><span class="lab">Déjà goûtés</span><div class="filter">${cand.map(f=>`<button type="button" class="chip" data-swapto="${f.id}">${esc(f.n)} ${avisEmoji(stat(f.id))}</button>`).join('')}</div></div>`:''}
+   ${sem.length?`<div class="fld"><span class="lab">Nouveautés de la semaine</span><div class="filter">${sem.map(x=>`<button type="button" class="chip" data-swapto="${x}">${esc(fname(x))}</button>`).join('')}</div></div>`:''}
+   <div class="fld"><span class="lab">Autre aliment</span><input type="search" id="sq" class="recherche" placeholder="Chercher un aliment" autocomplete="off"><div id="sqres" class="qres"></div></div>
+   <div class="sheet-foot"><button type="button" class="btn big sec" data-swapto="">Retirer sans remplacer</button></div>`;
+  showModal();
+}
+function majSwapRecherche(q){
+  const el=document.getElementById('sqres'); const k=cle(q);
+  el.innerHTML = k ? FOODS.filter(f=>f.id!==SWAP.id && (cle(f.n).includes(k)||norm(f.n).includes(norm(q)))).slice(0,6).map(f=>{ const s=stat(f.id);
+    return `<button type="button" class="ligne-main" data-swapto="${esc(f.id)}"><span class="nm">${esc(f.n)}</span>${f.alg?'<span class="pill butter">allergène</span>':!s.n?'<span class="pill sage">nouveau</span>':`<span class="em">${avisEmoji(s)}</span>`}</button>`; }).join('') : '';
+}
+function appliquerSwap(to){
+  const {id,ds}=SWAP; const td=fd(today());
+  const swaps=Object.fromEntries(Object.entries(S.settings.swaps||{}).filter(([d])=>d>=td));
+  const sw={skip:[...(swaps[ds]?.skip||[])],add:[...(swaps[ds]?.add||[])]};
+  if(sw.add.includes(id)) sw.add=sw.add.filter(x=>x!==id); else if(!sw.skip.includes(id)) sw.skip.push(id);
+  if(to){ sw.add.push(to); sw.skip=sw.skip.filter(x=>x!==to); }
+  swaps[ds]=sw; closeModal(); saveSettings({swaps});
+}
+
+/* ---------- Programme (8 semaines, éditable) ---------- */
 const OPENW=new Set();
 function setWeekFood(st,i,id,present){
   const inBase=PLAN[i].news.includes(id);
@@ -607,200 +582,153 @@ function setWeekFood(st,i,id,present){
 }
 function editFoods(fn){
   const st={removed:JSON.parse(JSON.stringify(S.settings.removed||{})),extra:JSON.parse(JSON.stringify(S.settings.extra||{}))};
-  fn(st); saveSettings(st);
+  fn(st); saveSettings(st); if(mbg.classList.contains('show')) drawProg();
 }
-function moveFood(i,id,dir){
-  const j=i+dir; if(j<0||j>=PLAN.length) return;
-  OPENW.add(i); OPENW.add(j);
-  editFoods(st=>{ setWeekFood(st,i,id,false); setWeekFood(st,j,id,true); });
-}
-function vPlanning(){
-  const sch=schedule(); const slot=currentSlot(sch); const cur=slot.k===-1?-1:slot.k;
-  const st=sch[0].start; const end=add(sch[sch.length-1].start,-1);
-  const b=pd(S.settings.birth); const six=b?new Date(b.getFullYear(),b.getMonth()+6,b.getDate()):null;
+function openProg(){ const sl=slotAt(schedule(),today()); if(sl&&sl.i!==undefined) OPENW.add(sl.i); drawProg(); showModal(); }
+function drawProg(){
+  const sch=schedule(); const t=today(); const cur=sch.findIndex(x=>t>=x.start && (x.after||t<add(x.start,7)));
   const planned=new Set(); PLAN.forEach((p,i)=>weekFoods(i).forEach(id=>planned.add(id)));
-  let html=`<div class="card soft"><h2>Les 2 mois</h2><div class="note" style="margin-top:4px">${frd(st,{day:'numeric',month:'long'})} → ${frd(end,{day:'numeric',month:'long'})} · ${planned.size} aliments · ${PLAN.filter(p=>p.alg).length} allergènes</div></div>`;
+  const rel=k=>{ const d=cur<0?k+ (t<sch[0].start?Math.ceil(diff(t,sch[0].start)/7):0) : k-cur; return d<0?'Passée':d===0?'Cette semaine':d===1?'Semaine prochaine':`Dans ${d} semaines`; };
+  let html=tete('Le programme');
   sch.forEach((x,k)=>{
-    if(x.after){ html+=`<div class="card soft" style="padding:12px 16px"><span class="kicker">À partir du ${frd(x.start)}${six?` · 6 mois le ${frd(six)}`:''}</span><br><b>La suite</b><div class="note">7 allergènes restants, morceaux, plat familial.</div></div>`; return; }
-    if(x.pause){ html+=`<div class="card" style="padding:12px 16px;opacity:.85"><div class="row between"><span><span class="kicker">${frd(x.start)} → ${frd(add(x.start,6))}</span><br><b>⏸ Semaine de pause</b> <span class="note">· aliments connus + entretien</span></span><button class="btn sm ghost" data-unpause="${x.i}">Retirer</button></div></div>`; return; }
-    const i=x.i, p=PLAN[i], foods=weekFoods(i), a=ageAt(x.start);
-    const tasted=foods.filter(id=>stat(id).n).length; const algOk=p.alg?groupStat(FMAP[p.alg].alg).ok>=3:true;
-    const isNow=k===cur, past=cur>-1&&k<cur;
-    const status = isNow?'<span class="pill blue">en cours</span>' : past?(tasted===foods.length&&algOk?'<span class="pill sage">✓</span>':'<span class="pill">à finir</span>'):'';
-    const flags=[]; const xmas=new Date(x.start.getFullYear(),11,25); if(xmas>=x.start&&xmas<add(x.start,7)) flags.push('🎄 Noël');
-    const ny=new Date(x.start.getFullYear()+(x.start.getMonth()===11?1:0),0,1); if(ny>=x.start&&ny<add(x.start,7)) flags.push('🥂 Nouvel An');
-    const open = OPENW.has(i);
-    const editRows = foods.map(id=>`<div class="maint"><span><b>${esc(fname(id))}</b> <span class="note">${stat(id).n?'· '+esc(stat(id).label):''}</span></span><span class="row" style="gap:2px">
-        <button class="btn sm ghost" data-mv="${i}" data-dir="-1" data-id="${id}" ${i===0?'disabled style="opacity:.25"':''} title="Avancer d'une semaine">◀</button>
-        <button class="btn sm ghost" data-mv="${i}" data-dir="1" data-id="${id}" ${i===PLAN.length-1?'disabled style="opacity:.25"':''} title="Reculer d'une semaine">▶</button>
-        <button class="btn sm ghost" data-wrm="${i}" data-id="${id}" title="Retirer">✕</button></span></div>`).join('');
-    const addSel = `<select data-wadd="${i}" style="margin-top:8px"><option value="">＋ Ajouter un aliment à cette semaine…</option>${Object.entries(CATS).filter(([c])=>c!=='alg').map(([c,cn])=>`<optgroup label="${esc(cn)}">${FOODS.filter(f=>f.c===c&&!f.alg&&!foods.includes(f.id)).map(f=>`<option value="${f.id}">${esc(f.n)}${planned.has(f.id)?' (déjà prévu sem. '+(introWeek(f.id)+1)+')':''}</option>`).join('')}</optgroup>`).join('')}</select>`;
-    html+=`<details class="week${isNow?' now':''}" data-w="${i}" ${open?'open':''}><summary>
-      <span style="flex:1"><span class="kicker">S${i+1} · ${frd(x.start)} → ${frd(add(x.start,6))}${a?' · '+ageTxt(a):''} · ${esc(p.j)}</span><br>
-      <b>${foods.map(fname).map(esc).join(', ')||'<span class="note">aucune nouveauté</span>'}</b>${p.alg?` <span class="pill butter">${esc(ALG[FMAP[p.alg].alg].n)}</span>`:''}${flags.length?` <span class="note">${flags.join(' · ')}</span>`:''}</span>${status}</summary>
-      <div class="in">
-        <div style="margin-top:8px"><b>Nouveautés</b></div>${editRows||'<div class="note">Aucune.</div>'}${addSel}
-        ${p.alg?`<div class="note" style="margin-top:10px"><b>Allergène</b> : ${esc(FMAP[p.alg].n)}, 3 prises dans la semaine. L'ordre des allergènes reste fixe (un à la fois, 3 jours d'écart minimum).</div>`:''}
-        ${dayPlanHtml(i,x.start)}
-        ${(isNow||!past)?`<div style="margin-top:10px"><button class="btn sm ghost" data-pause="${i}">⏸ Insérer une semaine de pause avant celle-ci (tout le reste recule d'une semaine)</button></div>`:''}
+    if(x.after) return;
+    if(x.pause){ html+=`<div class="sem pause"><span><span class="kicker">${rel(k)}</span><br><b>Pause</b> <span class="note">aliments connus</span></span><button type="button" class="btn sm ghost" data-unpause="${x.i}">Retirer</button></div>`; return; }
+    const i=x.i, p=PLAN[i], foods=weekFoods(i);
+    const fini=foods.every(id=>stat(id).n) && (!p.alg || groupStat(FMAP[p.alg].alg).ok>=3);
+    const editRows=foods.map(id=>`<div class="ligne"><span class="nm">${esc(fname(id))}</span>
+        <button type="button" class="btn sm ghost" data-mv="${i}" data-dir="-1" data-id="${id}" ${i===0?'disabled':''} aria-label="Semaine d'avant">◀</button>
+        <button type="button" class="btn sm ghost" data-mv="${i}" data-dir="1" data-id="${id}" ${i===PLAN.length-1?'disabled':''} aria-label="Semaine d'après">▶</button>
+        <button type="button" class="btn sm ghost" data-wrm="${i}" data-id="${id}" aria-label="Retirer">✕</button></div>`).join('');
+    const addSel=`<select data-wadd="${i}" aria-label="Ajouter un aliment"><option value="">＋ Ajouter un aliment</option>${Object.entries(CATS).filter(([c])=>c!=='alg'&&c!=='aut').map(([c,cn])=>`<optgroup label="${esc(cn)}">${FOODS.filter(f=>f.c===c&&!f.alg&&!foods.includes(f.id)).map(f=>`<option value="${f.id}">${esc(f.n)}${planned.has(f.id)?' (sem. '+(introWeek(f.id)+1)+')':''}</option>`).join('')}</optgroup>`).join('')}</select>`;
+    html+=`<details class="sem${k===cur?' now':''}" data-w="${i}" ${OPENW.has(i)?'open':''}><summary>
+      <span class="g"><span class="kicker">${rel(k)}</span><br><b>${foods.map(fname).map(esc).join(', ')||'Aucune nouveauté'}</b>${p.alg?` <span class="pill butter">${esc(ALG[FMAP[p.alg].alg].n)}</span>`:''}</span>${fini?'<span class="ok-ic">✓</span>':''}</summary>
+      <div class="in">${editRows}${addSel}
+        <details class="savoir"><summary>Bon à savoir</summary><ul class="tight">${p.know.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></details>
+        ${k>=cur?`<button type="button" class="btn sm ghost" data-pause="${i}">⏸ Pause d'une semaine avant</button>`:''}
       </div></details>`;
   });
-  return html;
+  modal.innerHTML=html;
 }
+function moveFood(i,id,dir){ const j=i+dir; if(j<0||j>=PLAN.length) return; OPENW.add(i); OPENW.add(j); editFoods(st=>{ setWeekFood(st,i,id,false); setWeekFood(st,j,id,true); }); }
+function weekRemove(i,id){ OPENW.add(i); editFoods(st=>setWeekFood(st,i,id,false)); }
+function weekAdd(i,id){ if(!id) return; OPENW.add(i); editFoods(st=>{ const w=introWeek(id); if(w>-1 && w!==i) setWeekFood(st,w,id,false); setWeekFood(st,i,id,true); }); }
 
-function refus(){
-  const t=today();
-  const items=FOODS.filter(f=>!f.alg && stat(f.id).st==='ref').map(f=>{const s=stat(f.id); const nx=add(pd(s.lastRef.date),2);
-    return {id:f.id,txt: s.refus>=10?'10 essais : faites une pause de quelques semaines':`Essai n°${s.refus+1}${nx>t?` à partir du ${frd(nx)}`:', dès que possible'} · changez la présentation`};});
-  if(!items.length) return '';
-  return `<div class="card"><h3>Refus à retenter</h3>
-   <div style="margin-top:6px">${items.map(x=>`<div class="maint"><span><b>${esc(fname(x.id))}</b><br><span class="note">${esc(x.txt)}</span></span><button class="btn sm sec" data-log="${x.id}">Noter</button></div>`).join('')}</div></div>`;
-}
-
-let FF='tous';
-function vFoods(){
-  const t=today();
-  // trois états lisibles : à tester (jamais goûté), en cours (goûté, pas encore acquis / toléré), acquis
-  const etat=s=>s.st==='done'?'done':s.n?'cours':'todo';
-  const ST=Object.fromEntries(FOODS.map(f=>[f.id,stat(f.id)]));
-  const nb={todo:0,cours:0,done:0}; FOODS.forEach(f=>nb[etat(ST[f.id])]++);
-  const pct=k=>(100*nb[k]/FOODS.length).toFixed(1)+'%';
-  const algs=Object.keys(ALG).map(groupStat); const algOk=algs.filter(g=>g.ok>=3).length, algCours=algs.filter(g=>g.n&&g.ok<3).length;
-  let html=`<div class="card soft synth">
-    <div class="jauge" role="img" aria-label="${nb.done} acquis, ${nb.cours} en cours, ${nb.todo} à tester"><span class="done" style="width:${pct('done')}"></span><span class="cours" style="width:${pct('cours')}"></span></div>
-    <div class="legend"><span><i class="done"></i><b>${nb.done}</b> acquis</span><span><i class="cours"></i><b>${nb.cours}</b> en cours</span><span><i></i><b>${nb.todo}</b> à tester</span></div>
-    <div class="note">Allergènes : ${algOk} toléré${algOk>1?'s':''}, ${algCours} en introduction, sur ${algs.length}</div>
-  </div>`;
-  const filters={tous:['Tous',FOODS.length],todo:['À tester',nb.todo],cours:['En cours',nb.cours],done:['Acquis',nb.done],alg:['Allergènes',FOODS.filter(f=>f.alg).length]};
-  html+=`<div class="filter">${Object.entries(filters).map(([k,[v,n]])=>`<button class="chip ${FF===k?'on':''}" data-ff="${k}">${v} <span class="n">${n}</span></button>`).join('')}</div>`;
-  Object.entries(CATS).forEach(([c,cn])=>{
-    const all=FOODS.filter(f=>f.c===c);
-    const list=all.filter(f=>FF==='tous'||(FF==='alg'?!!f.alg:etat(ST[f.id])===FF));
-    if(!list.length) return;
-    const gout=all.filter(f=>ST[f.id].n).length;
-    html+=`<h3 style="margin:14px 0 2px">${esc(cn)} <span class="note">${gout}/${all.length} goûtés</span></h3><div class="foods">${list.map(f=>foodCard(f.id,{date:t})).join('')}</div>`;
-  });
-  return html;
-}
-
-/* ================= MODALES ================= */
-const mbg=document.getElementById('mbg'), modal=document.getElementById('modal');
-function closeModal(){ mbg.classList.remove('show'); modal.innerHTML=''; document.body.classList.remove('noscroll'); }
-function showModal(){ mbg.classList.add('show'); modal.scrollTop=0; document.body.classList.add('noscroll'); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mbg.classList.contains('show')) closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.id==='other'){ e.preventDefault(); captureLog(); pickOther(); drawLog(); } });
-(function(){ let y0=null; mbg.addEventListener('touchstart',e=>{ y0=e.target.closest('.sheet-head')?e.touches[0].clientY:null; },{passive:true}); mbg.addEventListener('touchmove',e=>{ if(y0!=null && e.touches[0].clientY-y0>60){ y0=null; closeModal(); } },{passive:true}); })();
-mbg.addEventListener('click',e=>{ if(e.target===mbg) closeModal(); });
-
+/* ---------- Noter un repas ---------- */
 let F={};
 function openLog(preset, date){
-  const sch=schedule(); const slot=currentSlot(sch);
-  const wi = slot.s && !slot.s.after && !slot.s.pause ? slot.s.i : (slot.k===-1?0:null);
-  const suggested=new Set();
-  if(wi!==null){ weekFoods(wi).forEach(id=>suggested.add(id)); if(PLAN[wi].alg) suggested.add(PLAN[wi].alg); }
-  FOODS.forEach(f=>{ if(stat(f.id).n) suggested.add(f.id); });
-  F={foods:new Set(preset?[preset]:[]), date:date||fd(today()), avis:'', signal:'', qty:'', mode:'cuillere', shared:false, reac:'aucune', note:'', who:LS.get('div_who',''), other:'', otherCat:'leg'};
-  if(preset) suggested.add(preset);
-  F.suggested=[...suggested];
-  drawLog();
-  showModal();
+  const who=LS.get('div_who','');
+  F={foods:new Set(preset?[preset]:[]), date:date||fd(today()), avis:'', reac:'aucune', note:'', q:'', newName:'',
+     who: WHO.includes(who)?who:(who?'Autre':''), whoAutre: WHO.includes(who)?'':who};
+  drawLog(); showModal();
 }
-function chips(group,obj,cur,cls){ return Object.entries(obj).map(([k,v])=>`<button type="button" class="chip ${cur===k?'on '+(typeof v==='object'?v.cls:cls||''):''}" data-set="${group}" data-v="${k}">${esc(typeof v==='object'?(v.e?v.e+' '+v.n:v.n):v)}</button>`).join(''); }
+function prevusLe(ds){ const j=prochainsJours().find(x=>x.ds===ds); return j?j.items.map(it=>it.id):[]; }
 function drawLog(){
-  const sug=F.suggested; const rest=FOODS.filter(f=>!sug.includes(f.id));
-  const sel=[...F.foods];
-  const hasAlgNew = sel.some(id=>{const f=FMAP[id]; return f&&f.alg&&groupStat(f.alg).n===0;});
-  modal.innerHTML=`
-   <div class="sheet-head"><h2>Noter un repas</h2><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
-   <div class="fld"><span class="lab">Aliment(s) proposé(s)</span>
-     <div class="foodpick">${sug.map(id=>`<button type="button" class="chip ${F.foods.has(id)?'on g':''}" data-food="${id}">${esc(fname(id))}</button>`).join('')}</div>
-     <select id="addfood" style="margin-top:8px"><option value="">+ Un autre aliment de la liste…</option>${Object.entries(CATS).map(([c,cn])=>`<optgroup label="${esc(cn)}">${rest.filter(f=>f.c===c).map(f=>`<option value="${f.id}">${esc(f.n)}</option>`).join('')}</optgroup>`).join('')}</select>
-     <div class="newfood"><span class="lab">Pas dans la liste ?</span>
-       <input type="text" id="other" placeholder="Nom de l'aliment (ex. : topinambour)" value="${esc(F.other)}" enterkeyhint="done">
-       <select id="othercat" aria-label="Catégorie">${Object.entries(CATS).filter(([c])=>c!=='alg').map(([c,cn])=>`<option value="${c}" ${F.otherCat===c?'selected':''}>${esc(cn)}</option>`).join('')}</select>
-       <button type="button" class="btn sm sec" id="addOther">＋ Ajouter</button></div>
-   </div>
-   ${hasAlgNew?`<div class="info" style="margin-top:10px">Nouvel allergène : de préférence le matin ou le midi, à la maison, et observez Pedro pendant 2 heures.</div>`:''}
-   <div class="fld"><label for="date">Date</label><input type="date" id="date" value="${F.date}"></div>
-   <div class="fld"><span class="lab">Son avis</span><div class="filter">${chips('avis',AVIS,F.avis)}</div></div>
-   <div class="fld"><span class="lab">Ses signaux</span><div class="filter">${chips('signal',SIGNAUX,F.signal)}</div></div>
-   <div class="fld"><span class="lab">Quantité mangée</span><div class="filter">${chips('qty',QTE,F.qty)}</div></div>
-   <div class="fld"><span class="lab">Comment</span><div class="filter">${chips('mode',MODE,F.mode)}</div>
-     <label class="check"><input type="checkbox" id="shared" ${F.shared?'checked':''}><span>Repas partagé : on a mangé avec lui</span></label></div>
-   <div class="fld"><span class="lab">Réaction</span><div class="filter">${chips('reac',REAC,F.reac)}</div>
-     ${F.reac==='serieuse'?`<div class="warn"><b>Arrêtez cet aliment et contactez votre médecin.</b> En cas de gêne pour respirer, de malaise, de pâleur ou de somnolence inhabituelle : appelez le 15.</div>`:''}
-     ${F.reac==='surveiller'?`<div class="warn">Ne reproposez pas cet aliment avant d'en avoir parlé au médecin. Une photo des plaques peut aider.</div>`:''}
-   </div>
-   <div class="fld"><label for="note">Note</label><textarea id="note" placeholder="Préparation, mélange, contexte…">${esc(F.note)}</textarea></div>
-   <div class="fld"><label for="who">Qui l'a donné ?</label><input type="text" id="who" placeholder="Ton prénom" value="${esc(F.who)}"></div>
+  const chipsIds=[...new Set([...prevusLe(F.date),...F.foods])];
+  const nouvelAlg=[...F.foods].some(id=>{ const g=(FMAP[id]||{}).alg; return g && groupStat(g).n===0; });
+  modal.innerHTML=tete('Noter un repas')+`
+   <div class="fld ligne-date"><label for="date">Jour</label><input type="date" id="date" value="${F.date}"></div>
+   <div class="fld"><span class="lab">Aliments</span>
+     ${chipsIds.length?`<div class="filter">${chipsIds.map(id=>`<button type="button" class="chip ${F.foods.has(id)?'on g':''}" data-food="${esc(id)}" aria-pressed="${F.foods.has(id)}">${F.foods.has(id)?'✓ ':''}${esc(fname(id))}</button>`).join('')}</div>`:''}
+     <input type="search" id="q" class="recherche" placeholder="Chercher ou ajouter un aliment" value="${esc(F.q)}" autocomplete="off" enterkeyhint="done">
+     <div id="qres" class="qres"></div></div>
+   ${nouvelAlg?'<div class="info">Nouvel allergène : le matin ou le midi, à la maison. Observez Pedro 2 heures.</div>':''}
+   <div class="fld"><span class="lab">Son avis</span><div class="avis">${Object.entries(AVIS).map(([k,v])=>`<button type="button" class="${F.avis===k?'on':''}" data-avis="${k}" aria-pressed="${F.avis===k}"><span>${v.e}</span>${esc(v.n)}</button>`).join('')}</div></div>
+   <div class="fld"><label for="who">Donné par</label><select id="who"><option value="">Choisir</option>${[...WHO,'Autre'].map(w=>`<option ${F.who===w?'selected':''}>${w}</option>`).join('')}</select>
+     ${F.who==='Autre'?`<input type="text" id="whoAutre" placeholder="Prénom" value="${esc(F.whoAutre)}" style="margin-top:8px">`:''}</div>
+   <details class="plus" ${F.reac!=='aucune'||F.note?'open':''}><summary>Réaction, note</summary>
+     <div class="fld"><span class="lab">Réaction</span><div class="filter">${Object.entries(REAC).map(([k,v])=>`<button type="button" class="chip ${F.reac===k?'on '+v.cls:''}" data-reac="${k}">${esc(v.n)}</button>`).join('')}</div>
+       ${F.reac==='serieuse'?'<div class="warn"><b>Arrêtez cet aliment et contactez votre médecin.</b> Gêne pour respirer, malaise, pâleur : 15.</div>':''}
+       ${F.reac==='surveiller'?'<div class="warn">Ne reproposez pas cet aliment avant d\'en avoir parlé au médecin. Une photo peut aider.</div>':''}</div>
+     <div class="fld"><label for="note">Note</label><textarea id="note" placeholder="Préparation, mélange…">${esc(F.note)}</textarea></div>
+   </details>
    <div class="sheet-foot"><button type="button" class="btn big" id="saveLog">Enregistrer</button></div>`;
+  majRecherche();
+}
+function majRecherche(){
+  const el=document.getElementById('qres'); if(!el) return;
+  const q=cle(F.q);
+  if(F.newName){
+    el.innerHTML=`<p class="note">« ${esc(F.newName)} » est un…</p><div class="filter">${Object.entries(CAT_COURT).map(([c,n])=>`<button type="button" class="chip" data-newcat="${c}">${esc(n)}</button>`).join('')}</div>`;
+    return;
+  }
+  if(!q){ el.innerHTML=''; return; }
+  const res=FOODS.filter(f=>!F.foods.has(f.id) && (cle(f.n).includes(q)||norm(f.n).includes(norm(F.q)))).slice(0,6);
+  const exact=trouver(F.q);
+  el.innerHTML=res.map(f=>`<button type="button" class="ligne-main" data-pick="${esc(f.id)}"><span class="nm">${esc(f.n)}</span><span class="meta">${esc(CATS[f.c]||'')}</span></button>`).join('')
+    + (exact?'':`<button type="button" class="ligne-main ajout" data-new><span class="nm">＋ Ajouter « ${esc(F.q.trim())} »</span></button>`);
 }
 function captureLog(){
   const g=id=>document.getElementById(id);
   if(!g('date')) return;
-  F.date=g('date').value||F.date; F.note=g('note').value; F.who=g('who').value; F.other=g('other').value; F.otherCat=g('othercat').value; F.shared=g('shared').checked;
-}
-// nom tapé → aliment de la liste s'il existe déjà, sinon nouvel aliment ; coché dans le repas en cours
-function pickOther(){
-  const id=addCustom(F.other,F.otherCat); if(!id) return;
-  F.foods.add(id); if(!F.suggested.includes(id)) F.suggested.push(id); F.other='';
+  F.date=g('date').value||F.date; F.note=g('note').value; F.who=g('who').value; F.q=g('q').value;
+  if(g('whoAutre')) F.whoAutre=g('whoAutre').value;
 }
 async function saveLog(){
-  captureLog(); pickOther();
+  captureLog();
   const list=[...F.foods];
   if(!list.length){ alertBox('Choisissez au moins un aliment.'); return; }
-  LS.set('div_who',F.who.trim());
-  const base={date:F.date,avis:F.avis||'bof',signal:F.signal,qty:F.qty,mode:F.mode,shared:F.shared,reac:F.reac,note:F.note.trim().slice(0,500),who:F.who.trim().slice(0,40),ts:new Date().toISOString()};
+  if(!F.avis){ alertBox('Choisissez son avis.'); return; }
+  const who=(F.who==='Autre'?F.whoAutre:F.who).trim().slice(0,40);
+  LS.set('div_who',who);
+  const base={date:F.date,avis:F.avis,reac:F.reac,note:F.note.trim().slice(0,500),who,ts:new Date().toISOString()};
   const items=list.map(id=>({...base,food:id,foodName:fname(id),...(FMAP[id]?.custom?{cat:FMAP[id].c}:{})}));
   closeModal();
   const ids=await addEntries(items);
-  toastUndo(ids, items.length>1?`${items.length} aliments notés`:`${items[0].foodName} noté`);
+  toastUndo(ids, items.length>1?`${items.length} aliments notés`:`${items[0].foodName} noté ${AVIS[F.avis].e}`);
 }
-
-function openSettings(){
-  const s=S.settings;
-  modal.innerHTML=`<div class="sheet-head"><h2>Réglages</h2><button type="button" class="iconbtn" data-close aria-label="Fermer">✕</button></div>
-   <div class="fld"><label for="sName">Prénom</label><input type="text" id="sName" value="${esc(s.name)}" placeholder="Prénom"></div>
-   <div class="fld"><label for="sBirth">Date de naissance</label><input type="date" id="sBirth" value="${esc(s.birth)}"></div>
-   <div class="fld"><label for="sStart">Début de la diversification (un lundi idéalement)</label><input type="date" id="sStart" value="${esc(s.start)}"></div>
-   <p class="note">Le planning se recalcule à partir de cette date. ${S.mode==='db'?'Les réglages et le journal sont partagés avec les personnes qui ont accès à cette page.':'Les données sont enregistrées sur cet appareil.'}</p>
-   <div class="sheet-foot"><button type="button" class="btn big" id="saveSet">Enregistrer</button></div>`;
-  showModal();
-}
-function weekRemove(i,id){ OPENW.add(i); editFoods(st=>setWeekFood(st,i,id,false)); }
-function weekAdd(i,id){ if(!id) return; OPENW.add(i); editFoods(st=>{ const w=introWeek(id); if(w>-1 && w!==i) setWeekFood(st,w,id,false); setWeekFood(st,i,id,true); }); }
 
 /* ================= ÉVÉNEMENTS ================= */
 document.addEventListener('click',e=>{
-  const t=e.target.closest('button,a,input,[data-log]'); if(!t) return;
-  if(t.matches('#tabs a')){ e.preventDefault(); TAB=t.dataset.t; try{history.replaceState(null,'','#'+TAB)}catch(_){location.hash=TAB} render(); window.scrollTo(0,0); return; }
+  const t=e.target.closest('button,a,summary'); if(!t) return;
+  const d=t.dataset;
+  if(t.matches('#tabs a')){ e.preventDefault(); TAB=d.t; try{history.replaceState(null,'','#'+TAB)}catch(_){location.hash=TAB} render(); window.scrollTo(0,0); return; }
+  if(d.ff){ e.preventDefault(); FF=d.ff; render(); return; }
   if(t.id==='fab'){ openLog(null); return; }
-  if(t.id==='openSettings'){ openSettings(); return; }
-  if(t.dataset.mv!==undefined){ if(t.disabled) return; moveFood(+t.dataset.mv,t.dataset.id,+t.dataset.dir); return; }
-  if(t.dataset.quick){ quickLog(t.dataset.quick,t.dataset.avis); return; }
-  if(t.dataset.log!==undefined){ openLog(t.dataset.log||null, t.dataset.date); return; }
+  if(t.id==='openProg'){ openProg(); return; }
   if(t.hasAttribute('data-close')){ closeModal(); return; }
-  if(t.dataset.food){ captureLog(); const id=t.dataset.food; F.foods.has(id)?F.foods.delete(id):F.foods.add(id); drawLog(); return; }
-  if(t.dataset.set){ captureLog(); const k=t.dataset.set; F[k] = (F[k]===t.dataset.v && k!=='mode' && k!=='reac') ? '' : t.dataset.v; drawLog(); return; }
+  if(d.log!==undefined){ openLog(d.log||null, d.date && d.date<fd(today()) ? d.date : undefined); return; }
+  if(d.fiche){ openFiche(d.fiche); return; }
+  if(d.swap){ openSwap(d.swap,d.date); return; }
+  if(d.swapto!==undefined){ appliquerSwap(d.swapto); return; }
+  if(d.reset){ const swaps={...(S.settings.swaps||{})}; delete swaps[d.reset]; saveSettings({swaps}); return; }
+  if(d.cat){ saveSettings({cats:{...(S.settings.cats||{}),[FICHE]:d.cat}}); drawFiche(); return; }
+  // Noter un repas
+  if(d.food){ captureLog(); F.foods.has(d.food)?F.foods.delete(d.food):F.foods.add(d.food); drawLog(); return; }
+  if(d.pick){ captureLog(); F.foods.add(d.pick); F.q=''; drawLog(); document.getElementById('q').focus(); return; }
+  if(t.hasAttribute('data-new')){ captureLog(); F.newName=F.q.trim().slice(0,60); majRecherche(); return; }
+  if(d.newcat){ captureLog(); const id='autre:'+F.newName.toLowerCase(); customFood(id,F.newName,d.newcat); F.foods.add(id); F.newName=''; F.q=''; drawLog(); return; }
+  if(d.avis){ captureLog(); F.avis=d.avis; drawLog(); return; }
+  if(d.reac){ captureLog(); F.reac=d.reac; drawLog(); return; }
   if(t.id==='saveLog'){ saveLog(); return; }
-  if(t.id==='addOther'){ captureLog(); pickOther(); drawLog(); return; }
-  if(t.id==='saveSet'){ const g=id=>document.getElementById(id).value; saveSettings({name:g('sName').trim().slice(0,40),birth:g('sBirth'),start:g('sStart')}); closeModal(); return; }
-  if(t.dataset.ff){ FF=t.dataset.ff; render(); return; }
-  if(t.dataset.pause!==undefined){ const i=+t.dataset.pause; saveSettings({pauses:[...(S.settings.pauses||[]),i]}); return; }
-  if(t.dataset.unpause!==undefined){ e.preventDefault(); const i=+t.dataset.unpause; const p=[...(S.settings.pauses||[])]; const k=p.indexOf(i); if(k>-1)p.splice(k,1); saveSettings({pauses:p}); return; }
-  if(t.dataset.wrm!==undefined){ weekRemove(+t.dataset.wrm,t.dataset.id); return; }
-  if(t.dataset.del){ if(t.dataset.armed){ delEntry(t.dataset.del); } else { t.dataset.armed='1'; t.textContent='Supprimer ?'; t.style.color='var(--red)'; setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent='✕'; t.style.color=''; } },3000); } return; }
+  // Programme
+  if(d.mv!==undefined){ if(!t.disabled) moveFood(+d.mv,d.id,+d.dir); return; }
+  if(d.wrm!==undefined){ weekRemove(+d.wrm,d.id); return; }
+  if(d.pause!==undefined){ saveSettings({pauses:[...(S.settings.pauses||[]),+d.pause]}); drawProg(); return; }
+  if(d.unpause!==undefined){ const p=[...(S.settings.pauses||[])]; const k=p.indexOf(+d.unpause); if(k>-1)p.splice(k,1); saveSettings({pauses:p}); drawProg(); return; }
+  // Suppression d'un repas : double appui
+  if(d.del){ if(d.armed){ delEntry(d.del); } else { d.armed='1'; t.textContent='Supprimer ?'; t.classList.add('arme'); setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent='✕'; t.classList.remove('arme'); } },3000); } return; }
 });
 document.addEventListener('change',e=>{
   const t=e.target;
-  if(t.id==='addfood' && t.value){ captureLog(); F.foods.add(t.value); if(!F.suggested.includes(t.value)) F.suggested.push(t.value); drawLog(); }
   if(t.dataset && t.dataset.wadd!==undefined){ weekAdd(+t.dataset.wadd,t.value); }
+  if(t.id==='who'){ captureLog(); drawLog(); if(F.who==='Autre') document.getElementById('whoAutre').focus(); }
+  if(t.id==='date'){ captureLog(); drawLog(); }
 });
-document.addEventListener('toggle',e=>{ const d=e.target; if(d.matches && d.matches('details.week[data-w]')){ const i=+d.dataset.w; d.open?OPENW.add(i):OPENW.delete(i); } },true);
-document.addEventListener('input',e=>{ if(e.target.id==='whoQuick') LS.set('div_who',e.target.value.trim().slice(0,40)); });
-window.addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(h && h!==TAB){ TAB=h; render(); } });
-
-setInterval(()=>{ if(TAB==='aujourdhui' && document.activeElement?.id!=='whoQuick' && (observing().length || document.querySelector('.warn b'))) render(); },60000);
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){ F.q=e.target.value; F.newName=''; majRecherche(); }
+  if(e.target.id==='fq'){ FQ=e.target.value; render(); }
+  if(e.target.id==='sq') majSwapRecherche(e.target.value);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' || e.target.id!=='q') return;
+  e.preventDefault(); captureLog();
+  const first=document.querySelector('#qres [data-pick]');
+  if(first){ F.foods.add(first.dataset.pick); F.q=''; drawLog(); }
+  else if(F.q.trim()){ F.newName=F.q.trim().slice(0,60); majRecherche(); }
+});
+document.addEventListener('toggle',e=>{ const d=e.target; if(d.matches && d.matches('details.sem[data-w]')){ const i=+d.dataset.w; d.open?OPENW.add(i):OPENW.delete(i); } },true);
+window.addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(TABS.includes(h) && h!==TAB){ TAB=h; render(); } });
+setInterval(()=>{ if(TAB==='semaine' && observing().length && !mbg.classList.contains('show')) render(); },60000);
 initStore();
 </script>
 </body>
