@@ -72,7 +72,10 @@ $('#loginform').addEventListener('submit', async (e) => {
 function router() {
   const h = (location.hash || '#accueil').slice(1);
   const v = VUES.includes(h) ? h : 'accueil';
+  let fait = false;
   const changer = () => {
+    if (fait) return;
+    fait = true;
     VUES.forEach((n) => ($('#v-' + n).hidden = n !== v));
     $$('.tabbar a').forEach((a) =>
       a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'),
@@ -82,9 +85,11 @@ function router() {
     window.scrollTo(0, 0);
   };
   // La pilule de l'onglet actif glisse vers le nouvel onglet (sans animation si non supporté).
-  if (document.startViewTransition && $('.tabbar a[aria-current]'))
-    document.startViewTransition(changer).ready.catch(() => {}); // transition sautée : la vue change quand même
-  else changer();
+  // Filet : si le navigateur ne peint pas (onglet en arrière-plan), la vue change quand même.
+  if (document.startViewTransition && $('.tabbar a[aria-current]')) {
+    document.startViewTransition(changer).ready.catch(() => {});
+    setTimeout(changer, 400);
+  } else changer();
 }
 addEventListener('hashchange', router);
 
