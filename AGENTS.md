@@ -12,7 +12,7 @@ Zéro coût, zéro build : HTML, CSS et JS vanilla.
 
 ## Commandes
 
-Voir [README.md](README.md) : `pnpm dev` (http://localhost:5793), `pnpm db:migrate:local`, `pnpm deploy`, import du carnet.
+Voir [README.md](README.md) : `pnpm dev` (http://localhost:5793), `pnpm db:migrate:local`, `pnpm run deploy` (`pnpm deploy` est une commande interne de pnpm), import du carnet.
 `pnpm check` = Biome (format + lint) : doit passer avant tout commit.
 
 ## Carte du repo
