@@ -256,17 +256,24 @@ const tolere = g => { const gs=groupStat(g); return gs.ok>=3 && !gs.rx; };
 // recherche tolérante (accents, pluriel) dans le nom d'un aliment
 const correspond = (f,q) => { const k=cle(q); return !!k && (cle(f.n).includes(k)||norm(f.n).includes(norm(q))); };
 const compteEtats = () => { const nb={gout:0,cours:0,todo:0}; FOODS.forEach(f=>nb[stat(f.id).etat]++); return nb; };
-// etat : gout (goûté sans réaction ; allergène = 3 prises), cours (allergène en cours, refusé, réaction), todo
-// tag  : nuance pour la couleur du point — gout, alg, ref, rx, todo
+// Un aliment est « goûté » (validé) après SEUIL jours où il a été accepté (😋 ou 😐) sans réaction ;
+// un allergène après SEUIL prises sans réaction. Repère courant : quelques présentations sur des jours différents.
+const SEUIL = 3;
+// etat : gout (validé), cours (goûté sous le seuil, refusé, réaction), todo
+// tag  : nuance pour la couleur du point — gout, enc (sous le seuil), alg (allergène en cours), ref, rx, todo
 const stat = id => memo('s:'+id, ()=>{
   const es=entriesOf(id); const f=FMAP[id]||{};
-  const n=es.length, aime=es.filter(e=>e.avis==='aime').length, bof=es.filter(e=>e.avis==='bof').length, refus=es.filter(e=>e.avis==='refuse').length;
+  const n=es.length, aime=es.filter(e=>e.avis==='aime').length, refus=es.filter(e=>e.avis==='refuse').length;
+  const acc=new Set(es.filter(e=>e.avis!=='refuse' && !estRx(e)).map(e=>e.date)).size; // jours acceptés
   const last=es[n-1]||null, lastRef=[...es].reverse().find(e=>e.avis==='refuse')||null;
   const gs=f.alg?groupStat(f.alg):null;
-  const tag = es.some(estRx)||(gs&&gs.rx) ? 'rx' : gs&&gs.ok>=3 ? 'gout' : gs&&gs.ok ? 'alg' : n&&aime+bof ? 'gout' : n ? 'ref' : 'todo';
+  const tag = es.some(estRx)||(gs&&gs.rx) ? 'rx' : gs ? (gs.ok>=SEUIL?'gout':gs.ok?'alg':'todo')
+    : acc>=SEUIL ? 'gout' : acc ? 'enc' : n ? 'ref' : 'todo';
   const etat = tag==='gout'||tag==='todo' ? tag : 'cours';
-  return {n,aime,refus,last,lastRef,etat,tag,ok:gs?gs.ok:n};
+  return {n,aime,refus,last,lastRef,etat,tag,ok:gs?gs.ok:acc};
 });
+// déjà accepté au moins une fois, sans réaction : peut revenir en reprise ou en remplacement
+const accepte = s => s.tag==='gout' || s.tag==='enc';
 const avisEmoji = s => s.last ? (AVIS[s.last.avis]||{e:''}).e : '';
 
 /* ================= PROGRAMME ================= */
@@ -316,9 +323,9 @@ function cibles(slot){
   FOODS.forEach(f=>{ const s=stat(f.id); if(s.tag==='ref' && s.refus<10) push(f.id,1,'retry',{net:true,des:fd(add(pd(s.lastRef.date),2))}); });
   Object.keys(ALG).forEach(g=>{ if(!tolere(g)) return; push(ENT_FOOD[g]||FOODS.find(f=>f.alg===g).id, ALG[g].target,'ent'); });
   if(slot.pause || slot.after){
-    FOODS.filter(f=>!f.alg && stat(f.id).etat==='gout').sort((a,b)=>stat(b.id).aime-stat(a.id).aime).slice(0,4).forEach(f=>push(f.id,1,'rep'));
+    FOODS.filter(f=>!f.alg && accepte(stat(f.id))).sort((a,b)=>stat(b.id).aime-stat(a.id).aime).slice(0,4).forEach(f=>push(f.id,1,'rep'));
   } else {
-    for(let j=0;j<i;j++){ const n=REP_RULE(i-j); weekFoods(j).forEach(id=>{ if(stat(id).etat==='gout') push(id,n,'rep'); }); }
+    for(let j=0;j<i;j++){ const n=REP_RULE(i-j); weekFoods(j).forEach(id=>{ if(accepte(stat(id))) push(id,n,'rep'); }); }
   }
   return out;
 }
@@ -464,7 +471,7 @@ let FF=null, FQ=''; // segment choisi ; par défaut le premier non vide parmi En
 function ligneAliment(f){
   const s=stat(f.id); let droite='';
   if(s.tag==='rx') droite='<span class="meta rx">réaction</span>';
-  else if(s.tag==='alg') droite=`<span class="meta">${s.ok}/3</span>`;
+  else if(s.tag==='alg'||s.tag==='enc') droite=`<span class="meta">${s.ok}/${SEUIL}</span>`;
   else if(s.tag==='ref') droite='<span class="meta">à retenter</span>';
   else if(s.n) droite=`<span class="em">${avisEmoji(s)}</span>`;
   return `<button type="button" class="ligne-main aliment" data-fiche="${esc(f.id)}">${point(s.tag)}<span class="nm">${esc(f.n)}</span>${droite}</button>`;
@@ -545,7 +552,7 @@ function openFiche(id){ FICHE=id; FEUILLE='fiche'; drawFiche(); showModal(); }
 function drawFiche(){
   const f=FMAP[FICHE]; if(!f){ closeModal(); return; }
   const s=stat(f.id); const es=entriesOf(f.id).slice().reverse();
-  const etat={gout:'Goûté',cours:s.tag==='rx'?'Réaction notée':s.tag==='alg'?`Allergène · ${s.ok}/3 prises`:'À retenter',todo:'À tester'}[s.etat];
+  const etat={gout:'Goûté',cours:s.tag==='rx'?'Réaction notée':s.tag==='alg'?`Allergène · ${s.ok}/${SEUIL} prises`:s.tag==='enc'?`Goûté · ${s.ok}/${SEUIL} fois`:'À retenter',todo:'À tester'}[s.etat];
   const iw=introWeek(f.id);
   modal.innerHTML=tete(f.n)+`
    <p class="fiche-etat">${point(s.tag)}${esc(etat)}${iw>-1&&!s.n?` · prévu semaine ${iw+1}`:''}</p>
@@ -561,8 +568,8 @@ let SWAP=null;
 function openSwap(id,ds){
   SWAP={id,ds}; FEUILLE=null;
   const prevus=new Set(prochainsJours().find(j=>j.ds===ds)?.items.map(it=>it.id)||[]);
-  const cand=FOODS.filter(f=>!prevus.has(f.id) && !f.alg && stat(f.id).etat==='gout');
-  const sem=(()=>{ const sl=slotAt(schedule(),pd(ds)); return semaineNormale(sl)?weekFoods(sl.i).filter(x=>!prevus.has(x)&&stat(x).etat!=='gout'):[]; })();
+  const cand=FOODS.filter(f=>!prevus.has(f.id) && !f.alg && accepte(stat(f.id)));
+  const sem=(()=>{ const sl=slotAt(schedule(),pd(ds)); return semaineNormale(sl)?weekFoods(sl.i).filter(x=>!prevus.has(x)&&!accepte(stat(x))):[]; })();
   modal.innerHTML=tete(`Remplacer ${fname(id)}`)+`
    <p class="note">${esc(cap(frd(pd(ds),{weekday:'long',day:'numeric',month:'long'})))}. Le reste de la semaine se recalcule.</p>
    ${cand.length?`<div class="fld"><span class="lab">Déjà goûtés</span><div class="filter">${cand.map(f=>`<button type="button" class="chip" data-swapto="${f.id}">${esc(f.n)} ${avisEmoji(stat(f.id))}</button>`).join('')}</div></div>`:''}
