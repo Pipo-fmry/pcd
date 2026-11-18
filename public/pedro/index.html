@@ -449,8 +449,27 @@ function ligneItem(it,j){
   const dose = it.kind==='alg' && PROTO[it.id] ? `<span class="note">${esc(PROTO[it.id][it.prise]||'')} · le midi, à la maison</span>` : '';
   return `<div class="ligne"><button type="button" class="ligne-main" data-log="${esc(it.id)}" data-date="${j.ds}"><span class="nm">${nm}${dose?'<br>'+dose:''}</span>${droite}</button><button type="button" class="swap" data-swap="${esc(it.id)}" data-date="${j.ds}" aria-label="Remplacer ${nm}">⇄</button></div>`;
 }
-function ligneFait(e){
-  return `<div class="ligne fait"><span class="ok-ic" aria-hidden="true">✓</span><span class="nm">${esc(fname(e.food))}</span><span class="em">${(AVIS[e.avis]||{e:''}).e}</span></div>`;
+// Un repas = les aliments notés ensemble (champ `repas`). Anciennes entrées sans ce champ : un repas par jour.
+const repasDe = e => e.repas || 'j:'+e.date;
+function grouperRepas(list){
+  const m=new Map();
+  list.forEach(e=>{ const k=repasDe(e); if(!m.has(k)) m.set(k,new Map()); m.get(k).set(e.food,e); }); // un aliment une fois par repas
+  return [...m.values()].map(x=>[...x.values()]);
+}
+// « Poireau + Pomme de terre » ; un seul emoji si tout le repas a le même avis, sinon un par aliment
+function nomsRepas(es){
+  const meme=es.every(e=>e.avis===es[0].avis); const em=e=>(AVIS[e.avis]||{e:''}).e;
+  return {nm:es.map(e=>esc(e.foodName||fname(e.food))+(meme?'':' '+em(e))).join(' + '), em:meme?em(es[0]):''};
+}
+function ligneFait(es){
+  const {nm,em}=nomsRepas(es);
+  return `<div class="ligne fait"><span class="ok-ic" aria-hidden="true">✓</span><span class="nm">${nm}</span><span class="em">${em}</span></div>`;
+}
+function ligneRepas(es){
+  const {nm,em}=nomsRepas(es); const rx=es.find(e=>estRx(e)||e.reac==='legere');
+  const uniq=k=>[...new Set(es.map(e=>e[k]).filter(Boolean))].join(', ');
+  const meta=[cap(frd(pd(es[0].date),{weekday:'short',day:'numeric',month:'short'})),uniq('who'),rx?REAC[rx.reac].n:'',uniq('note')].filter(Boolean).map(esc).join(' · ');
+  return `<div class="ligne"><span class="em">${em||'🍽️'}</span><span class="nm">${nm}<br><span class="note">${meta}</span></span><button type="button" class="btn ghost sm del" data-del="${es.map(e=>esc(e.id)).join(',')}" aria-label="Supprimer ce repas">✕</button></div>`;
 }
 function vSemaine(){
   const jours=prochainsJours(); const sch=schedule();
@@ -460,7 +479,7 @@ function vSemaine(){
   if(today()<sch[0].start) html+=`<p class="note intro">On commence ${esc(frd(sch[0].start,{weekday:'long',day:'numeric',month:'long'}))}.</p>`;
   let lastSlot=null;
   jours.forEach(j=>{
-    const faits=[...new Map(j.faits.map(e=>[e.food,e])).values()];
+    const faits=grouperRepas(j.faits);
     const qt = j.slot!==lastSlot && semaineNormale(j.slot) ? PLAN[j.slot.i].qt : '';
     const sem = j.slot!==lastSlot && lastSlot ? (j.slot.pause?'Semaine de pause':j.slot.after?'Fin du programme':'Nouvelle semaine') : '';
     lastSlot=j.slot;
@@ -535,8 +554,8 @@ function vProgres(){
   html+=`<div class="jour"><span>Badges</span><span class="qt">${bs.filter(b=>b.ok).length}/${bs.length}</span></div><div class="card liste">${bs.sort((a,b)=>b.ok-a.ok).map(b=>`<div class="ligne badge${b.ok?' ok':''}"><span class="be" aria-hidden="true">${b.e}</span><span class="nm">${esc(b.n)}</span>${b.ok?'<span class="ok-ic">✓</span>':`<span class="meta">${esc(b.p||'')}</span>`}</div>`).join('')}</div>`;
   const pref=FOODS.filter(f=>stat(f.id).aime).sort((a,b)=>stat(b.id).aime-stat(a.id).aime).slice(0,3);
   if(pref.length) html+=`<div class="jour"><span>Ses préférés</span></div><div class="card liste">${pref.map(f=>`<div class="ligne"><span class="em">😋</span><span class="nm">${esc(f.n)}</span><span class="meta">${stat(f.id).aime}×</span></div>`).join('')}</div>`;
-  const journal=S.entries.slice().sort(parDate).reverse().slice(0,12);
-  if(journal.length) html+=`<div class="jour"><span>Derniers repas</span></div><div class="card liste">${journal.map(lignePrise).join('')}</div>`;
+  const journal=grouperRepas(S.entries.slice().sort(parDate).reverse()).slice(0,12);
+  if(journal.length) html+=`<div class="jour"><span>Derniers repas</span></div><div class="card liste">${journal.map(ligneRepas).join('')}</div>`;
   return html;
 }
 function lignePrise(e){
@@ -700,7 +719,7 @@ async function saveLog(){
   const who=(F.who==='Autre'?F.whoAutre:F.who).trim().slice(0,40);
   LS.set('div_who',who);
   const avis=F.avis;
-  const base={date:F.date,avis,reac:F.reac,note:F.note.trim().slice(0,500),who,ts:new Date().toISOString()};
+  const base={date:F.date,repas:'r'+Date.now().toString(36),avis,reac:F.reac,note:F.note.trim().slice(0,500),who,ts:new Date().toISOString()};
   const items=list.map(id=>({...base,food:id,foodName:fname(id),...(FMAP[id]?.custom?{cat:FMAP[id].c}:{})}));
   closeModal();
   const ids=await addEntries(items);
@@ -736,7 +755,7 @@ document.addEventListener('click',e=>{
   if(d.pause!==undefined){ saveSettings({pauses:[...(S.settings.pauses||[]),+d.pause]}); drawProg(); return; }
   if(d.unpause!==undefined){ const p=[...(S.settings.pauses||[])]; const k=p.indexOf(+d.unpause); if(k>-1)p.splice(k,1); saveSettings({pauses:p}); drawProg(); return; }
   // Suppression d'un repas : double appui
-  if(d.del){ if(d.armed){ delEntry(d.del); } else { d.armed='1'; t.textContent='Supprimer ?'; t.classList.add('arme'); setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent='✕'; t.classList.remove('arme'); } },3000); } return; }
+  if(d.del){ if(d.armed){ (async()=>{ for(const id of d.del.split(',')) await delEntry(id); })(); } else { d.armed='1'; t.textContent='Supprimer ?'; t.classList.add('arme'); setTimeout(()=>{ if(t.isConnected){ delete t.dataset.armed; t.textContent='✕'; t.classList.remove('arme'); } },3000); } return; }
 });
 document.addEventListener('change',e=>{
   const t=e.target;
